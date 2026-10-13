@@ -1,0 +1,30 @@
+{
+    "general": {
+      "nombre_artista_agrupacion": "Monte Virgen",
+      "pais": "Argentina (Capilla del Monte / San Marcos Sierras, Córdoba)",
+      "persona_contacto": "Melisa Schneider",
+      "email_contacto": "meli_schneider@hotmail.com",
+      "whatsapp_contacto": "+549111537581011",
+      "trayectoria_resumen": "Monte Virgen surge en 2024 integrado por mujeres con trayectoria en el teatro. Melisa Schneider (Actriz/Productora/Dramaturga) se formó con Hugo Midón y Augusto Fernández. Fundó el Colectivo Cultural El Bondi y gestionó 'La noche de Pandoras'. Participó en festivales como Entepola México y Chile."
+    },
+    "espectaculo": {
+      "titulo": "Deseo, mantente firme",
+      "direccion": "Malena Vieytes",
+      "sinopsis": "Monte Virgen presenta una obra de dramaturgia propia que indaga sobre el deseo, la memoria y el territorio. A través de una puesta física y poética, dos intérpretes encarnan el conflicto de la permanencia y el movimiento en el contexto serrano.",
+      "publico_objetivo": "Mayores de 15 años",
+      "duracion_minutos": "60 minutos",
+      "tiempo_montaje_desmontaje": "Montaje: 2 horas / Desmontaje: 1 hora",
+      "cantidad_delegacion": "2 (Melisa Schneider y Ezequiel Vallejo)",
+      "ciudad_origen": "Capilla del Monte y San Marcos Sierras, Córdoba, Argentina"
+    },
+    "tecnica_y_links": {
+      "rider_tecnico_resumen": "Espacio mínimo de escenario: 6m x 5m. Sistema de sonido estéreo básico (entrada XLR/Jack). Planta de luces general cálida y 2 spots cenitales.",
+      "link_video_completo": "https://vimeo.com/ejemplo-video-completo",
+      "link_carpeta_drive": "https://drive.google.com/drive/folders/1nFQKC6lE6HMHyrXvrainggqjQ2pbcU85?usp=drive_link",
+      "monto_honorarios_usd": "1 función: $400 USD / 2 funciones: $700 USD / 3 funciones: $900 USD"
+    },
+    "informacion_adicional": {
+      "notas_prensa_criticas": "Obra seleccionada en encuentros culturales regionales de Córdoba.",
+      "comentarios_adicionales": "Dossier y documentación técnica completa disponible en la carpeta de Drive provista."
+    }
+  }
