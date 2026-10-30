@@ -1,0 +1,32 @@
+{
+  "_fuente": "Escrito ANTES de la primera llamada a la IA, a partir de data/obra-demo.json sin modificar y fixtures/form-a.estructura.json. Pendiente de revisión de Ezequiel.",
+  "_reglas": {
+    "origenes": "ficha = dato tal cual (revisar no) | adaptado = recortado/reformateado de un campo (revisar sí) | propuesta_ia = no está en la ficha (revisar sí) | sin_dato = vacío (revisar sí) | archivo_manual = pregunta de archivo (revisar sí)",
+    "respuesta_null": "cuando 'respuesta' es null se acepta cualquier valor que cumpla 'origenes' y la nota"
+  },
+  "respuestas": [
+    { "entry": "entry.530285729",  "pregunta": "Aceptación de las bases", "origenes": ["propuesta_ia"], "respuesta": "Sí (Yes)", "campo": null, "revisar": true, "nota": "La IA no puede aceptar bases por el artista: se propone y se marca para revisar." },
+    { "entry": "entry.1188998454", "pregunta": "Nombre del representante", "origenes": ["ficha"], "respuesta": "Melisa Schneider", "campo": "general.persona_contacto", "revisar": false },
+    { "entry": "entry.1952567098", "pregunta": "País", "origenes": ["adaptado"], "respuesta": "Argentina", "campo": "general.pais", "revisar": true },
+    { "entry": "entry.1396807213", "pregunta": "Ciudad", "origenes": ["adaptado"], "respuesta": null, "campo": "espectaculo.ciudad_origen", "revisar": true, "nota": "Debe nombrar Capilla del Monte y/o San Marcos Sierras, sin agregar otras ciudades." },
+    { "entry": "entry.1024514287", "pregunta": "Teléfono", "origenes": ["ficha"], "respuesta": "+549111537581011", "campo": "general.whatsapp_contacto", "revisar": false, "nota": "Se copia tal cual. El número de la ficha parece tener un dígito de más: corregirlo en la ficha, no en el formulario." },
+    { "entry": "entry.941314172",  "pregunta": "Email", "origenes": ["ficha"], "respuesta": "meli_schneider@hotmail.com", "campo": "general.email_contacto", "revisar": false },
+    { "entry": "entry.1879131417", "pregunta": "Nombre de la obra", "origenes": ["ficha"], "respuesta": "Deseo, mantente firme", "campo": "espectaculo.titulo", "revisar": false },
+    { "entry": "entry.734797885",  "pregunta": "Disciplina", "origenes": ["propuesta_ia"], "respuesta": "Teatro", "campo": null, "revisar": true, "nota": "No está en la ficha; se infiere de la trayectoria." },
+    { "entry": "entry.1397899750", "pregunta": "Género", "origenes": ["sin_dato", "propuesta_ia"], "respuesta": null, "campo": null, "revisar": true, "nota": "No está en la ficha. Nunca como dato seguro." },
+    { "entry": "entry.2060865434", "pregunta": "Rango de edad", "origenes": ["ficha"], "respuesta": "Mayores de 15 años", "campo": "espectaculo.publico_objetivo", "revisar": false },
+    { "entry": "entry.815342644",  "pregunta": "Reseña (máx. 500)", "origenes": ["ficha", "adaptado"], "respuesta": null, "campo": "espectaculo.sinopsis", "revisar": false, "nota": "La sinopsis tiene 341 caracteres: lo ideal es copiarla tal cual. Si se adapta: ≤ 500 caracteres, sin información nueva, y revisar sí." },
+    { "entry": "entry.1315410192", "pregunta": "Duración", "origenes": ["ficha"], "respuesta": "60 minutos", "campo": "espectaculo.duracion_minutos", "revisar": false },
+    { "entry": "entry.184215241",  "pregunta": "Dossier (archivo)", "origenes": ["archivo_manual"], "respuesta": null, "campo": null, "revisar": true, "nota": "Sugerir el dossier en PDF de la carpeta de Drive." },
+    { "entry": "entry.1961142150", "pregunta": "Link del video", "origenes": ["ficha"], "respuesta": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG", "campo": "tecnica_y_links.link_video_completo", "revisar": false },
+    { "entry": "entry.711371698",  "pregunta": "3 fotos 300 DPI (archivo)", "origenes": ["archivo_manual"], "respuesta": null, "campo": null, "revisar": true, "nota": "Sugerir 3 fotos de la obra en alta resolución." },
+    { "entry": "entry.985948242",  "pregunta": "Autor(a)", "origenes": ["sin_dato", "propuesta_ia"], "respuesta": null, "campo": null, "revisar": true, "nota": "No está en la ficha (es opcional en el formulario). Nunca como dato seguro." },
+    { "entry": "entry.187110554",  "pregunta": "Permiso de derechos (archivo)", "origenes": ["archivo_manual"], "respuesta": null, "campo": null, "revisar": true },
+    { "entry": "entry.990423431",  "pregunta": "Director(a)", "origenes": ["ficha"], "respuesta": "Malena Vieytes", "campo": "espectaculo.direccion", "revisar": false },
+    { "entry": "entry.776321051",  "pregunta": "Ficha artística completa", "origenes": ["sin_dato", "propuesta_ia"], "respuesta": null, "campo": null, "revisar": true, "nota": "La ficha no tiene elenco ni equipo. Si propone algo, solo con nombres que estén en la ficha." },
+    { "entry": "entry.1793256391", "pregunta": "Número de personas", "origenes": ["adaptado"], "respuesta": "2", "campo": "espectaculo.cantidad_delegacion", "revisar": true },
+    { "entry": "entry.1778788252", "pregunta": "Ficha técnica (archivo)", "origenes": ["archivo_manual"], "respuesta": null, "campo": null, "revisar": true, "nota": "Sugerir el rider técnico en PDF." },
+    { "entry": "entry.1581684456", "pregunta": "Tiempo de montaje", "origenes": ["adaptado"], "respuesta": "2 horas", "campo": "espectaculo.tiempo_montaje_desmontaje", "revisar": true },
+    { "entry": "entry.1315553276", "pregunta": "Tiempo de desmontaje", "origenes": ["adaptado"], "respuesta": "1 hora", "campo": "espectaculo.tiempo_montaje_desmontaje", "revisar": true }
+  ]
+}
