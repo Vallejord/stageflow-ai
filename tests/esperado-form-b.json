@@ -1,0 +1,19 @@
+{
+  "_fuente": "tools/crear-form-b.gs",
+  "titulo": "PRUEBA StageFlow — Formulario B (tipos)",
+  "requiereLogin": false,
+  "secciones": [
+    { "titulo": "PRUEBA StageFlow — Formulario B (tipos)", "preguntas": [
+      { "titulo": "¿En qué disciplinas trabaja la compañía?", "tipo": "casillas", "obligatoria": true, "opciones": ["Teatro", "Danza", "Música", "Circo"], "validaciones": [{ "tipo": "casillas", "condicion": "al_menos", "valor": 1 }] },
+      { "titulo": "Provincia", "tipo": "desplegable", "obligatoria": true, "opciones": ["Buenos Aires", "Córdoba", "Santa Cruz", "Otra"], "validaciones": [] },
+      { "titulo": "Año de estreno", "tipo": "respuesta_corta", "obligatoria": false, "validaciones": [{ "tipo": "numero", "condicion": "entre", "valores": ["1950", "2027"] }] }
+    ]},
+    { "titulo": "Fechas y valoración", "preguntas": [
+      { "titulo": "Fecha de estreno", "tipo": "fecha", "obligatoria": true, "validaciones": [] },
+      { "titulo": "Horario preferido de función", "tipo": "hora", "obligatoria": false, "validaciones": [] },
+      { "titulo": "¿Qué tan adaptable es la obra a espacios no convencionales?", "tipo": "escala", "obligatoria": true, "opciones": ["1", "2", "3", "4", "5"], "extremos": { "min": "Nada", "max": "Totalmente" }, "validaciones": [] },
+      { "titulo": "Disponibilidad por mes", "tipo": "cuadricula_opcion", "obligatoria": true, "opciones": ["Disponible", "No disponible"], "filas": ["Enero", "Febrero", "Marzo"], "validaciones": [] },
+      { "titulo": "Necesidades técnicas por sala", "tipo": "cuadricula_casillas", "obligatoria": false, "opciones": ["Sonido", "Luces", "Proyector"], "filas": ["Sala chica", "Sala grande"], "validaciones": [] }
+    ]}
+  ]
+}

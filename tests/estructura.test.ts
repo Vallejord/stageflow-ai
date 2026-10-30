@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { leerEstructura, type EstructuraForm } from '../lib/motor/google-forms/estructura.ts'
 import { comparar, tablaMarkdown } from './comparar.ts'
 
@@ -38,4 +38,16 @@ test('Tipo desconocido: queda como no_soportado y no rompe la lectura', () => {
   assert.equal(r.totalPreguntas, 2)
   assert.equal(r.secciones[0].preguntas[0].tipo, 'no_soportado')
   assert.deepEqual(r.noSoportadas, ['Pregunta rara (código 99)'])
+})
+
+const hayFormB = existsSync(new URL('../fixtures/form-b.script.txt', import.meta.url))
+test('Formulario B: reconoce cada tipo con sus opciones (criterio 2 y 3)', { skip: !hayFormB && 'falta capturar el formulario B' }, () => {
+  const leido = leerEstructura(cargar('form-b.script.txt'))
+  assert.equal(leido.ok, true)
+  const esperado = JSON.parse(readFileSync(new URL('./esperado-form-b.json', import.meta.url), 'utf8'))
+  const filas = comparar(esperado, leido as EstructuraForm)
+  writeFileSync(new URL('../fixtures/comparacion-form-b.md', import.meta.url), tablaMarkdown(filas) + '\n')
+  assert.deepEqual((leido as EstructuraForm).noSoportadas, [])
+  const dif = filas.filter((f) => !f.coincide)
+  assert.deepEqual(dif, [], `Hay ${dif.length} diferencias; ver fixtures/comparacion-form-b.md`)
 })

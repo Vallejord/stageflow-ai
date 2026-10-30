@@ -31,7 +31,12 @@ export function comparar(esperado: any, leido: EstructuraForm): Fila[] {
       add(nombre, `P${n} obligatoria`, pe.obligatoria ? 'sí' : 'no', pl ? (pl.obligatoria ? 'sí' : 'no') : '(falta)')
       add(nombre, `P${n} validaciones`, JSON.stringify(pe.validaciones), JSON.stringify(pl?.validaciones))
       if (pe.opciones) add(nombre, `P${n} opciones`, JSON.stringify(pe.opciones), JSON.stringify(pl?.opciones))
-      const necesitaEntry = pe.tipo !== 'archivo'
+      if (pe.extremos) add(nombre, `P${n} extremos de la escala`, JSON.stringify(pe.extremos), JSON.stringify(pl?.extremos))
+      if (pe.filas) {
+        add(nombre, `P${n} filas`, JSON.stringify(pe.filas), JSON.stringify(pl?.filas?.map((f) => f.titulo)))
+        add(nombre, `P${n} cada fila tiene entry.<número>`, 'sí', pl?.filas?.every((f) => /^entry\.\d+$/.test(f.entry)) ? 'sí' : 'no')
+      }
+      const necesitaEntry = pe.tipo !== 'archivo' && !pe.filas
       if (necesitaEntry) add(nombre, `P${n} tiene entry.<número>`, 'sí', pl?.entry && /^entry\.\d+$/.test(pl.entry) ? 'sí' : 'no')
     })
   })
