@@ -1,0 +1,289 @@
+{
+  "ok": true,
+  "titulo": "PRUEBA StageFlow — Clon FITCRUZ 2027",
+  "descripcion": "Formulario de PRUEBA para StageFlow AI. No es una convocatoria real.\nReplica la estructura del Formulario de postulación FITCRUZ 2027.",
+  "requiereLogin": true,
+  "secciones": [
+    {
+      "titulo": "PRUEBA StageFlow — Clon FITCRUZ 2027",
+      "descripcion": "Formulario de PRUEBA para StageFlow AI. No es una convocatoria real.\nReplica la estructura del Formulario de postulación FITCRUZ 2027.",
+      "preguntas": [
+        {
+          "titulo": "He leído minuciosamente las bases de la convocatoria y estoy de acuerdo con todo lo explicado en dicho documento. (I have carefully read the call guidelines and agree with everything explained in that document.)",
+          "ayuda": null,
+          "codigoTipo": 2,
+          "entry": "entry.530285729",
+          "obligatoria": true,
+          "tipo": "opcion_multiple",
+          "opciones": [
+            "Sí (Yes)"
+          ],
+          "validaciones": []
+        }
+      ]
+    },
+    {
+      "titulo": "Datos generales (General information)",
+      "descripcion": null,
+      "preguntas": [
+        {
+          "titulo": "Nombres y apellidos del representante del grupo (Names and surnames of the group representative)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1188998454",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "País (Country)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1952567098",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Ciudad (City)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1396807213",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Teléfono celular (Cell phone)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1024514287",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Correo electrónico (E-mail)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.941314172",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": [
+            {
+              "tipo": "email"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "Datos de la obra (Production details)",
+      "descripcion": null,
+      "preguntas": [
+        {
+          "titulo": "Nombre de la obra (Production title)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1879131417",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Disciplina (Theatrical discipline)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.734797885",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Género (Genre)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1397899750",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Rango de edad del público recomendado (Recommended audience age)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.2060865434",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Reseña de la obra (máximo 500 carac.) (Production´s synopsis)",
+          "ayuda": null,
+          "codigoTipo": 1,
+          "entry": "entry.815342644",
+          "obligatoria": true,
+          "tipo": "parrafo",
+          "opciones": null,
+          "validaciones": [
+            {
+              "tipo": "max_caracteres",
+              "valor": 500
+            }
+          ]
+        },
+        {
+          "titulo": "Duración del espectáculo (Performance length)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1315410192",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Dossier de la obra (historial de la obra y compañía, archivos de prensa y crítica, información adicional relevante. Archivo PDF) (Performance dossier - PDF file)",
+          "ayuda": null,
+          "codigoTipo": 13,
+          "entry": "entry.184215241",
+          "obligatoria": true,
+          "tipo": "archivo",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Enlace del video con la obra completa, sin cortes ni cambios de cámara, visualizable en Youtube o Vimeo. (Link to the youtube or vimeo video of the proposed production)",
+          "ayuda": "No se aceptan enlaces de archivos descargables. La calidad mínima será de 720p y con buena calidad de audio. (Downloadable files are not accepted. Minimum quality 720p with good audio.)",
+          "codigoTipo": 0,
+          "entry": "entry.1961142150",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": [
+            {
+              "tipo": "url"
+            }
+          ]
+        },
+        {
+          "titulo": "Adjuntar al presente formulario tres (3) fotografías de la obra en formato digital con una resolución mínima de 300 DPI (3 300 DPI performance photos)",
+          "ayuda": null,
+          "codigoTipo": 13,
+          "entry": "entry.711371698",
+          "obligatoria": true,
+          "tipo": "archivo",
+          "opciones": null,
+          "validaciones": []
+        }
+      ]
+    },
+    {
+      "titulo": "Ficha artística (Artistic details)",
+      "descripcion": null,
+      "preguntas": [
+        {
+          "titulo": "Autor(a) de la obra (Author´s name)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.985948242",
+          "obligatoria": false,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Adjuntar los documentos que certifiquen el permiso de derechos de autor para presentar la obra. (Archivo PDF). (Professional stage licence)",
+          "ayuda": null,
+          "codigoTipo": 13,
+          "entry": "entry.187110554",
+          "obligatoria": true,
+          "tipo": "archivo",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Director(a) de la obra (Stage director)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.990423431",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Ficha artística completa: elenco y equipo creativo (Full cast and creative team)",
+          "ayuda": "Un rol por línea. Ej.: \"Iluminación: Nombre Apellido\". (One role per line.)",
+          "codigoTipo": 1,
+          "entry": "entry.776321051",
+          "obligatoria": true,
+          "tipo": "parrafo",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Número de personas que estarían en el Festival (artistas, equipo técnico y dirección) (Number of people that would be coming to the festival)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1793256391",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": [
+            {
+              "tipo": "numero_entero"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "Ficha técnica (Technical information)",
+      "descripcion": null,
+      "preguntas": [
+        {
+          "titulo": "Ficha técnica (planta escenografía, plano de iluminación y requerimientos técnicos. Archivo PDF) (Technical rider (Set design, props and lighting requirements))",
+          "ayuda": null,
+          "codigoTipo": 13,
+          "entry": "entry.1778788252",
+          "obligatoria": true,
+          "tipo": "archivo",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Tiempo de montaje (Set up time)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1581684456",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Tiempo de desmontaje (Strike time)",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.1315553276",
+          "obligatoria": true,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": []
+        }
+      ]
+    }
+  ],
+  "totalPreguntas": 23,
+  "noSoportadas": []
+}
