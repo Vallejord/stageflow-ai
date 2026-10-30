@@ -57,8 +57,8 @@ export async function llamarGemini(prompt: string, esquema: object, apiKey = pro
         responseSchema: esquema as never,
         temperature: 0,
         // Mapear preguntas a datos no necesita razonamiento largo; sin esto el modelo "piensa"
-        // a veces 2.000+ tokens y tarda más de 20 s (visto en las corridas del 30/10).
-        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+        // a veces 2.000+ tokens y tarda más de 20 s (visto en las corridas del 30/10). MINIMAL no está soportado en este modelo.
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
         abortSignal: corte.signal,
       },
     })
