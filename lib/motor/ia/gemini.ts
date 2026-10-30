@@ -11,9 +11,12 @@ const TIMEOUT_MS = 30_000
 
 export class ErrorIA extends Error {
   motivo: 'sin_clave' | 'clave_invalida' | 'sin_cupo' | 'tiempo' | 'conexion' | 'respuesta_invalida' | 'otro'
-  constructor(motivo: ErrorIA['motivo'], mensaje: string) {
+  /** Mensaje original del proveedor, para diagnóstico. */
+  detalle: string
+  constructor(motivo: ErrorIA['motivo'], mensaje: string, detalle = '') {
     super(mensaje)
     this.motivo = motivo
+    this.detalle = detalle
   }
 }
 
@@ -27,40 +30,43 @@ export interface ResultadoLlamada {
 
 function clasificar(e: unknown): ErrorIA {
   const msg = e instanceof Error ? e.message : String(e)
-  if (/API key not valid|API_KEY_INVALID|401|403|PERMISSION_DENIED/i.test(msg))
-    return new ErrorIA('clave_invalida', 'La clave de la IA no es válida o no tiene permiso. Revisá GEMINI_API_KEY.')
-  if (/429|RESOURCE_EXHAUSTED|quota/i.test(msg))
-    return new ErrorIA('sin_cupo', 'La IA no tiene cupo disponible en este momento (límite de uso alcanzado). Probá más tarde o revisá la facturación.')
+  const detalle = msg.slice(0, 400)
+  if (/API_KEY_INVALID|API key not valid|UNAUTHENTICATED|PERMISSION_DENIED|"code":\s*40[13]\b/i.test(msg))
+    return new ErrorIA('clave_invalida', 'La clave de la IA no es válida o no tiene permiso. Revisá GEMINI_API_KEY.', detalle)
+  if (/RESOURCE_EXHAUSTED|"code":\s*429\b|quota/i.test(msg))
+    return new ErrorIA('sin_cupo', 'La IA no tiene cupo disponible en este momento (límite de uso alcanzado). Probá más tarde o revisá la facturación.', detalle)
   if (/fetch failed|ENOTFOUND|ECONNRESET|network/i.test(msg))
-    return new ErrorIA('conexion', 'No se pudo conectar con la IA. Revisá la conexión a internet.')
-  return new ErrorIA('otro', `La IA devolvió un error: ${msg.slice(0, 300)}`)
+    return new ErrorIA('conexion', 'No se pudo conectar con la IA. Revisá la conexión a internet.', detalle)
+  return new ErrorIA('otro', 'La IA devolvió un error.', detalle)
 }
 
 export async function llamarGemini(prompt: string, esquema: object, apiKey = process.env.GEMINI_API_KEY): Promise<ResultadoLlamada> {
   if (!apiKey) throw new ErrorIA('sin_clave', 'Falta la clave de la IA (GEMINI_API_KEY en .env.local).')
   const ai = new GoogleGenAI({ apiKey })
   const t0 = performance.now()
+  // Corte real del pedido (no solo dejar de esperar): si no, el programa queda colgado hasta que Google responde.
+  const corte = new AbortController()
+  const reloj = setTimeout(() => corte.abort(), TIMEOUT_MS)
   let respuesta
   try {
-    respuesta = await Promise.race([
-      ai.models.generateContent({
-        model: MODELO,
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: esquema as never,
-          temperature: 0,
-          // Mapear preguntas a datos no necesita razonamiento largo; sin esto el modelo "piensa"
-          // a veces 2.000+ tokens y tarda más de 20 s (visto en las corridas del 30/10).
-          thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-        },
-      }),
-      new Promise<never>((_, rej) =>
-        setTimeout(() => rej(new ErrorIA('tiempo', `La IA no respondió en ${TIMEOUT_MS / 1000} segundos.`)), TIMEOUT_MS),
-      ),
-    ])
+    respuesta = await ai.models.generateContent({
+      model: MODELO,
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: esquema as never,
+        temperature: 0,
+        // Mapear preguntas a datos no necesita razonamiento largo; sin esto el modelo "piensa"
+        // a veces 2.000+ tokens y tarda más de 20 s (visto en las corridas del 30/10).
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+        abortSignal: corte.signal,
+      },
+    })
   } catch (e) {
-    throw e instanceof ErrorIA ? e : clasificar(e)
+    if (corte.signal.aborted) throw new ErrorIA('tiempo', `La IA no respondió en ${TIMEOUT_MS / 1000} segundos.`)
+    throw clasificar(e)
+  } finally {
+    clearTimeout(reloj)
   }
   const ms = Math.round(performance.now() - t0)
 

@@ -39,7 +39,10 @@ try {
 } catch (e) {
   if (e instanceof ErrorIA) {
     console.log(`ERROR: no se pudieron obtener las respuestas. ${e.message} (motivo: ${e.motivo})`)
+    if (e.detalle) console.log(`Detalle del proveedor: ${e.detalle}`)
     console.log('No se guardó ningún resultado.')
     process.exitCode = 2
   } else throw e
 }
+
+process.exit(process.exitCode ?? 0)
