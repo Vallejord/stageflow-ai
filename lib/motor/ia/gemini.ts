@@ -2,7 +2,7 @@
  * Llamada a Gemini con salida estructurada. Corre en el servidor (la clave nunca va a la extensión).
  * Errores: siempre se lanza ErrorIA con un mensaje claro; nunca se devuelve un resultado a medias.
  */
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 
 export const MODELO = 'gemini-3.8-flash'
 /** USD por millón de tokens, tarifa vigente hasta el 31/12/2026 (se duplica el 1/1/2027). */
@@ -46,7 +46,14 @@ export async function llamarGemini(prompt: string, esquema: object, apiKey = pro
       ai.models.generateContent({
         model: MODELO,
         contents: prompt,
-        config: { responseMimeType: 'application/json', responseSchema: esquema as never, temperature: 0 },
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: esquema as never,
+          temperature: 0,
+          // Mapear preguntas a datos no necesita razonamiento largo; sin esto el modelo "piensa"
+          // a veces 2.000+ tokens y tarda más de 20 s (visto en las corridas del 30/10).
+          thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+        },
       }),
       new Promise<never>((_, rej) =>
         setTimeout(() => rej(new ErrorIA('tiempo', `La IA no respondió en ${TIMEOUT_MS / 1000} segundos.`)), TIMEOUT_MS),
