@@ -17,16 +17,24 @@ export type FormField = {
   source: string
 }
 
+/** Información del festival/convocatoria destino */
+export type Festival = {
+  name: string
+  call: string
+  formUrl: string
+}
+
 export const FORM_PAGES: Record<FormPage, string> = {
   1: 'Datos de la compañía',
   2: 'Ficha artística',
   3: 'Material de apoyo',
 }
 
-export const FESTIVAL = {
-  name: 'Festival Escena Abierta 2027',
-  call: 'Convocatoria Internacional · Sala & Calle',
-  formUrl: 'docs.google.com/forms/d/e/1FAIpQLSe-escena-abierta/viewform',
+/** Placeholder cuando no hay festival seleccionado */
+export const FESTIVAL_PLACEHOLDER: Festival = {
+  name: 'Festival no configurado',
+  call: 'Ingresa la URL del formulario para comenzar',
+  formUrl: '',
 }
 
 export function buildFormFields(play: Play, feeUsd: string): FormField[] {

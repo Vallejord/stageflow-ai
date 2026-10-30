@@ -10,6 +10,7 @@ import {
   Check,
   CheckCircle2,
   Circle,
+  ExternalLink,
   FileText,
   Link2,
   Loader2,
@@ -104,7 +105,7 @@ export function ApplicationWizard({ play }: { play: Play }) {
           {step === 2 && (
             <AnalysisStep play={play} feeUsd={feeUsd} onFeeUsdChange={setFeeUsd} />
           )}
-          {step === 3 && <ExecutionStep playId={play.id} feeUsd={feeUsd} />}
+          {step === 3 && <ExecutionStep playId={play.id} feeUsd={feeUsd} formUrl={formUrl} />}
         </div>
 
         <DialogFooter className="m-0 rounded-none p-4 sm:justify-between">
@@ -437,10 +438,17 @@ const AGENT_TASKS = [
   'Abriendo navegador Chromium en GCP Cloud Run...',
 ] as const
 
-function ExecutionStep({ playId, feeUsd }: { playId: string; feeUsd: string }) {
+function ExecutionStep({ playId, feeUsd, formUrl }: { playId: string; feeUsd: string; formUrl: string }) {
   const router = useRouter()
   const [completed, setCompleted] = useState(0)
   const [launched, setLaunched] = useState(false)
+  const [agentStatus, setAgentStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
+  const [agentError, setAgentError] = useState<string | null>(null)
+  const [agentResult, setAgentResult] = useState<{
+    pagesProcessed: number
+    totalFieldsCompleted: number
+    totalFieldsFound: number
+  } | null>(null)
   const preparing = completed < 2
 
   useEffect(() => {
@@ -449,12 +457,59 @@ function ExecutionStep({ playId, feeUsd }: { playId: string; feeUsd: string }) {
     return () => clearTimeout(timer)
   }, [completed])
 
+  // Ejecutar el agente real cuando se lanza
   useEffect(() => {
-    if (!launched) return
-    const query = feeUsd.trim() ? `?honorarios=${encodeURIComponent(feeUsd.trim())}` : ''
-    const timer = setTimeout(() => router.push(`/agente/${playId}${query}`), 1600)
-    return () => clearTimeout(timer)
-  }, [launched, playId, feeUsd, router])
+    if (!launched || agentStatus !== 'idle') return
+    
+    async function runAgent() {
+      setAgentStatus('running')
+      console.log('[StageFlow] Iniciando agente con URL:', formUrl)
+      
+      try {
+        const response = await fetch('/api/agent/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            formUrl: formUrl.trim(),
+            maxIterations: 20,
+            timeoutMs: 300000, // 5 minutos
+          }),
+        })
+        
+        const data = await response.json()
+        console.log('[StageFlow] Respuesta del agente:', data)
+        
+        if (data.status === 'error') {
+          setAgentStatus('error')
+          setAgentError(data.error || 'Error desconocido')
+          return
+        }
+        
+        if (data.status === 'login_required') {
+          setAgentStatus('error')
+          setAgentError('Se requiere iniciar sesión. Busca la ventana de Chromium, inicia sesión, y vuelve a intentar. Tu sesión quedará guardada.')
+          return
+        }
+        
+        setAgentResult({
+          pagesProcessed: data.pagesProcessed,
+          totalFieldsCompleted: data.totalFieldsCompleted,
+          totalFieldsFound: data.totalFieldsFound,
+        })
+        setAgentStatus('success')
+        
+        // NO redirigir - el usuario debe revisar el navegador Chromium que se abrió
+        // La ventana de Chromium permanece abierta para revisión humana
+        
+      } catch (err) {
+        console.error('[StageFlow] Error ejecutando agente:', err)
+        setAgentStatus('error')
+        setAgentError(err instanceof Error ? err.message : 'Error de conexión')
+      }
+    }
+    
+    runAgent()
+  }, [launched, formUrl, feeUsd, playId, router, agentStatus])
 
   function stateFor(index: number): TaskState {
     if (index < completed) return 'done'
@@ -462,7 +517,11 @@ function ExecutionStep({ playId, feeUsd }: { playId: string; feeUsd: string }) {
     return 'pending'
   }
 
-  const progress = Math.round(((completed + (launched ? 0.5 : 0)) / AGENT_TASKS.length) * 100)
+  const progress = agentStatus === 'success' 
+    ? 100 
+    : agentStatus === 'running' 
+      ? Math.round(((completed + 1) / AGENT_TASKS.length) * 100) 
+      : Math.round(((completed + (launched ? 0.5 : 0)) / AGENT_TASKS.length) * 100)
 
   return (
     <div className="flex flex-col gap-5">
@@ -470,61 +529,116 @@ function ExecutionStep({ playId, feeUsd }: { playId: string; feeUsd: string }) {
         <div className="flex items-center gap-3">
           <span className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
             <Bot className="size-5" aria-hidden="true" />
-            {(preparing || launched) && (
+            {(preparing || agentStatus === 'running') && (
               <span className="absolute -top-0.5 -right-0.5 size-2.5 animate-pulse rounded-full bg-primary" />
+            )}
+            {agentStatus === 'success' && (
+              <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-green-500" />
+            )}
+            {agentStatus === 'error' && (
+              <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-destructive" />
             )}
           </span>
           <div className="flex flex-col">
             <span className="text-sm font-medium" aria-live="polite">
-              {launched
-                ? 'Postulación en vivo iniciada'
-                : preparing
-                  ? 'Agente IA preparando la postulación...'
-                  : 'Agente listo para postular'}
+              {agentStatus === 'success'
+                ? `Agente terminó. Revisá Chrome: ${agentResult?.totalFieldsCompleted}/${agentResult?.totalFieldsFound} campos verificados`
+                : agentStatus === 'error'
+                  ? 'Error en el agente'
+                  : agentStatus === 'running'
+                    ? 'Si Chromium pide login, entrá ahí. El agente espera y sigue.'
+                    : preparing
+                      ? 'Agente IA preparando la postulación...'
+                      : 'Agente listo para postular'}
             </span>
-            <span className="text-xs text-muted-foreground tabular-nums">{progress}% completado</span>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {agentStatus === 'success' 
+                ? `${agentResult?.pagesProcessed} páginas procesadas`
+                : `${progress}% completado`}
+            </span>
           </div>
         </div>
         <Progress value={progress} aria-label="Progreso del agente" />
       </div>
 
-      <ol className="flex flex-col gap-1" aria-label="Estado de las tareas del agente">
-        {AGENT_TASKS.map((label, index) => {
-          const state = stateFor(index)
-          return (
-            <li key={label} className="flex items-center gap-3 rounded-md px-2 py-2.5">
-              <TaskIcon state={state} />
-              <span
-                className={cn(
-                  'text-sm',
-                  state === 'done' && 'text-foreground',
-                  state === 'running' && 'font-medium text-foreground',
-                  state === 'pending' && 'text-muted-foreground'
-                )}
-              >
-                {label}
+      {agentStatus === 'success' && (
+        <div className="flex flex-col gap-3 rounded-lg border-2 border-green-500/50 bg-green-500/10 p-4">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 size-6 shrink-0 text-green-500" aria-hidden="true" />
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+                El agente terminó. Revisá cada campo en Chrome.
               </span>
-              <span className="sr-only">
-                {state === 'done' ? '(completado)' : state === 'running' ? '(en curso)' : '(pendiente)'}
+              <span className="text-sm text-muted-foreground">
+                Solo contamos un campo como completado si el valor escrito coincide con el de la obra.
               </span>
-            </li>
-          )
-        })}
-      </ol>
+            </div>
+          </div>
+          <div className="rounded-md bg-background/80 p-3 text-sm">
+            <p className="font-medium mb-2">👉 Próximos pasos:</p>
+            <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+              <li>Busca la <strong>ventana de Chromium</strong> que se abrió</li>
+              <li>Revisa que los datos estén correctos</li>
+              <li>Haz clic en <strong>"Enviar"</strong> manualmente</li>
+              <li>Cierra el navegador cuando termines</li>
+            </ol>
+          </div>
+        </div>
+      )}
 
-      <Button
-        size="lg"
-        className="h-11 w-full gap-2"
-        disabled={preparing || launched}
-        onClick={() => setLaunched(true)}
-      >
-        {launched ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-        ) : (
-          <PlayIcon className="size-4" aria-hidden="true" />
-        )}
-        {launched ? 'Conectando con el navegador...' : 'Iniciar Postulación en Vivo'}
-      </Button>
+      {agentError && (
+        <div className="flex items-start gap-3 rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium text-destructive">Error del agente</span>
+            <span className="text-xs text-muted-foreground">{agentError}</span>
+          </div>
+        </div>
+      )}
+
+      {agentStatus !== 'success' && (
+        <>
+          <ol className="flex flex-col gap-1" aria-label="Estado de las tareas del agente">
+            {AGENT_TASKS.map((label, index) => {
+              const state = stateFor(index)
+              return (
+                <li key={label} className="flex items-center gap-3 rounded-md px-2 py-2.5">
+                  <TaskIcon state={state} />
+                  <span
+                    className={cn(
+                      'text-sm',
+                      state === 'done' && 'text-foreground',
+                      state === 'running' && 'font-medium text-foreground',
+                      state === 'pending' && 'text-muted-foreground'
+                    )}
+                  >
+                    {label}
+                  </span>
+                  <span className="sr-only">
+                    {state === 'done' ? '(completado)' : state === 'running' ? '(en curso)' : '(pendiente)'}
+                  </span>
+                </li>
+              )
+            })}
+          </ol>
+
+          <Button
+            size="lg"
+            className="h-11 w-full gap-2"
+            disabled={preparing || launched}
+            onClick={() => setLaunched(true)}
+          >
+            {agentStatus === 'running' ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <PlayIcon className="size-4" aria-hidden="true" />
+            )}
+            {agentStatus === 'running' 
+              ? 'Navegador Chromium ejecutando...' 
+              : 'Iniciar Postulación en Vivo'}
+          </Button>
+        </>
+      )}
     </div>
   )
 }

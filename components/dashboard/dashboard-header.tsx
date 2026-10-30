@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { COMPANY_PROFILE } from '@/lib/plays'
 
 export function DashboardHeader() {
   const { resolvedTheme, setTheme } = useTheme()
@@ -72,9 +73,9 @@ export function DashboardHeader() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuGroup>
               <DropdownMenuLabel>
-                <span className="block text-sm font-medium text-foreground">Lucía Márquez</span>
+                <span className="block text-sm font-medium text-foreground">{COMPANY_PROFILE.director}</span>
                 <span className="block text-xs font-normal text-muted-foreground">
-                  Cía. Las Pandoras
+                  {COMPANY_PROFILE.name}
                 </span>
               </DropdownMenuLabel>
             </DropdownMenuGroup>

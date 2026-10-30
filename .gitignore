@@ -15,3 +15,9 @@ node_modules
 .next/
 .DS_Store
 *.tsbuildinfo
+
+# Browser persistent session data (contains cookies/auth)
+.browser-user-data/
+
+# Agent runtime logs
+logs/

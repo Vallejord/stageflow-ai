@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Server } from 'lucide-react'
 import { BrowserStream } from '@/components/agent/browser-stream'
 import { MappingInspector } from '@/components/agent/mapping-inspector'
-import { FESTIVAL, type FieldStatus, type FormField, type FormPage } from '@/lib/form-mapping'
+import { type Festival, type FieldStatus, type FormField, type FormPage } from '@/lib/form-mapping'
 import type { Play } from '@/components/dashboard/play-card'
 
 export type AgentMode = 'running' | 'paused' | 'manual'
@@ -13,7 +13,7 @@ export type AgentMode = 'running' | 'paused' | 'manual'
 const TYPE_DELAY_MS = 40
 const FIELD_PAUSE_MS = 700
 
-export function AgentWorkspace({ play, fields }: { play: Play; fields: FormField[] }) {
+export function AgentWorkspace({ play, fields, festival }: { play: Play; fields: FormField[]; festival: Festival }) {
   const firstPendingIndex = Math.max(
     0,
     fields.findIndex((f) => f.page === 2)
@@ -119,9 +119,9 @@ export function AgentWorkspace({ play, fields }: { play: Play; fields: FormField
         </Link>
         <div className="flex min-w-0 flex-col">
           <h1 className="truncate text-sm font-semibold tracking-tight">
-            {play.title} <span className="font-normal text-muted-foreground">{'→'} {FESTIVAL.name}</span>
+            {play.title} <span className="font-normal text-muted-foreground">{'→'} {festival.name}</span>
           </h1>
-          <p className="truncate text-xs text-muted-foreground">{FESTIVAL.call}</p>
+          <p className="truncate text-xs text-muted-foreground">{festival.call}</p>
         </div>
         <span className="ml-auto hidden items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-xs text-muted-foreground md:inline-flex">
           <Server className="size-3" aria-hidden="true" />
@@ -135,6 +135,7 @@ export function AgentWorkspace({ play, fields }: { play: Play; fields: FormField
           className="flex flex-col border-b p-3 md:p-4 md:min-h-0 md:w-3/5 md:border-r md:border-b-0"
         >
           <BrowserStream
+            festival={festival}
             fields={fields}
             values={values}
             statuses={statuses}

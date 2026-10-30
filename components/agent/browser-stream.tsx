@@ -4,12 +4,13 @@ import { useEffect, useRef } from 'react'
 import { CheckCircle2, ChevronLeft, ChevronRight, Hand, Lock, Pause, RotateCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { FESTIVAL, FORM_PAGES, type FieldStatus, type FormField, type FormPage } from '@/lib/form-mapping'
+import { FORM_PAGES, type Festival, type FieldStatus, type FormField, type FormPage } from '@/lib/form-mapping'
 import type { AgentMode } from '@/components/agent/agent-workspace'
 
 const TOTAL_PAGES = 3
 
 export function BrowserStream({
+  festival,
   fields,
   values,
   statuses,
@@ -22,6 +23,7 @@ export function BrowserStream({
   onFieldChange,
   onPageChange,
 }: {
+  festival: Festival
   fields: FormField[]
   values: Record<string, string>
   statuses: Record<string, FieldStatus>
@@ -56,7 +58,7 @@ export function BrowserStream({
         />
         <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-md bg-background px-2.5 py-1 font-mono text-xs text-muted-foreground">
           <Lock className="size-3 shrink-0" aria-hidden="true" />
-          <span className="truncate">{FESTIVAL.formUrl}</span>
+          <span className="truncate">{festival.formUrl || 'Sin URL configurada'}</span>
         </div>
         <span className="hidden items-center gap-1.5 font-mono text-xs text-muted-foreground sm:inline-flex">
           <span className="size-1.5 rounded-full bg-destructive" aria-hidden="true" />
@@ -70,9 +72,9 @@ export function BrowserStream({
         <div className="mx-auto flex max-w-xl flex-col gap-3 px-4 pt-16 pb-6">
           <div className="overflow-hidden rounded-lg border border-t-8 border-t-primary bg-card p-5">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {FESTIVAL.call}
+              {festival.call}
             </p>
-            <h2 className="mt-1 text-xl font-semibold tracking-tight text-balance">{FESTIVAL.name}</h2>
+            <h2 className="mt-1 text-xl font-semibold tracking-tight text-balance">{festival.name}</h2>
             <p className="mt-2 text-xs text-muted-foreground">
               <span className="text-destructive">*</span> Indica que la pregunta es obligatoria
             </p>
@@ -83,7 +85,7 @@ export function BrowserStream({
               <CheckCircle2 className="size-8 text-primary" aria-hidden="true" />
               <p className="font-semibold">Se registró tu respuesta</p>
               <p className="text-sm text-muted-foreground text-pretty">
-                El comité de {FESTIVAL.name} recibió la postulación. Te escribirán al correo de contacto.
+                El comité de {festival.name} recibió la postulación. Te escribirán al correo de contacto.
               </p>
             </div>
           ) : (

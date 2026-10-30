@@ -71,7 +71,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <div className="rounded-lg border bg-card p-3 text-xs leading-relaxed text-muted-foreground group-data-[collapsible=icon]:hidden">
           <p className="font-medium text-foreground">Temporada 2026–27</p>
-          <p>12 festivales abren convocatoria este mes.</p>
+          <p>Busca convocatorias activas para postular tu obra.</p>
         </div>
       </SidebarFooter>
       <SidebarRail />
