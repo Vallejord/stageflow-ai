@@ -57,8 +57,8 @@
               "tipo": "numero",
               "condicion": "entre",
               "valores": [
-                "1950.0",
-                "2027.0"
+                1950,
+                2027
               ]
             }
           ]

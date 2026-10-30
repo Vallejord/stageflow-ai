@@ -1,0 +1,173 @@
+{
+  "ok": true,
+  "titulo": "PRUEBA StageFlow — Formulario B (tipos)",
+  "descripcion": "Formulario de prueba de StageFlow. No responder.",
+  "requiereLogin": false,
+  "secciones": [
+    {
+      "titulo": "PRUEBA StageFlow — Formulario B (tipos)",
+      "descripcion": "Formulario de prueba de StageFlow. No responder.",
+      "preguntas": [
+        {
+          "titulo": "¿En qué disciplinas trabaja la compañía?",
+          "ayuda": null,
+          "codigoTipo": 4,
+          "entry": "entry.1121520150",
+          "obligatoria": true,
+          "tipo": "casillas",
+          "opciones": [
+            "Teatro",
+            "Danza",
+            "Música",
+            "Circo"
+          ],
+          "validaciones": [
+            {
+              "tipo": "casillas",
+              "condicion": "al_menos",
+              "valor": 1
+            }
+          ]
+        },
+        {
+          "titulo": "Provincia",
+          "ayuda": null,
+          "codigoTipo": 3,
+          "entry": "entry.474601466",
+          "obligatoria": true,
+          "tipo": "desplegable",
+          "opciones": [
+            "Buenos Aires",
+            "Córdoba",
+            "Santa Cruz",
+            "Otra"
+          ],
+          "validaciones": []
+        },
+        {
+          "titulo": "Año de estreno",
+          "ayuda": null,
+          "codigoTipo": 0,
+          "entry": "entry.223954454",
+          "obligatoria": false,
+          "tipo": "respuesta_corta",
+          "opciones": null,
+          "validaciones": [
+            {
+              "tipo": "numero",
+              "condicion": "entre",
+              "valores": [
+                1950,
+                2027
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "Fechas y valoración",
+      "descripcion": null,
+      "preguntas": [
+        {
+          "titulo": "Fecha de estreno",
+          "ayuda": null,
+          "codigoTipo": 9,
+          "entry": "entry.55975959",
+          "obligatoria": true,
+          "tipo": "fecha",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "Horario preferido de función",
+          "ayuda": null,
+          "codigoTipo": 10,
+          "entry": "entry.452777983",
+          "obligatoria": false,
+          "tipo": "hora",
+          "opciones": null,
+          "validaciones": []
+        },
+        {
+          "titulo": "¿Qué tan adaptable es la obra a espacios no convencionales?",
+          "ayuda": null,
+          "codigoTipo": 5,
+          "entry": "entry.380367010",
+          "obligatoria": true,
+          "tipo": "escala",
+          "opciones": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "validaciones": [],
+          "extremos": {
+            "min": "Nada",
+            "max": "Totalmente"
+          }
+        },
+        {
+          "titulo": "Disponibilidad por mes",
+          "ayuda": null,
+          "codigoTipo": 7,
+          "entry": null,
+          "obligatoria": true,
+          "tipo": "cuadricula_opcion",
+          "opciones": [
+            "Disponible",
+            "No disponible"
+          ],
+          "filas": [
+            {
+              "entry": "entry.806976356",
+              "titulo": "Enero",
+              "obligatoria": true
+            },
+            {
+              "entry": "entry.852949929",
+              "titulo": "Febrero",
+              "obligatoria": true
+            },
+            {
+              "entry": "entry.1234861109",
+              "titulo": "Marzo",
+              "obligatoria": true
+            }
+          ],
+          "validaciones": []
+        },
+        {
+          "titulo": "Necesidades técnicas por sala",
+          "ayuda": null,
+          "codigoTipo": 7,
+          "entry": null,
+          "obligatoria": false,
+          "tipo": "cuadricula_casillas",
+          "opciones": [
+            "Sonido",
+            "Luces",
+            "Proyector"
+          ],
+          "filas": [
+            {
+              "entry": "entry.494853336",
+              "titulo": "Sala chica",
+              "obligatoria": false
+            },
+            {
+              "entry": "entry.979075374",
+              "titulo": "Sala grande",
+              "obligatoria": false
+            }
+          ],
+          "validaciones": []
+        }
+      ]
+    }
+  ],
+  "totalPreguntas": 8,
+  "noSoportadas": []
+}
