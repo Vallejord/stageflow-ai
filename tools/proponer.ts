@@ -45,4 +45,3 @@ try {
   } else throw e
 }
 
-process.exit(process.exitCode ?? 0)
