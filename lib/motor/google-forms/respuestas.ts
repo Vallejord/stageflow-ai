@@ -80,8 +80,8 @@ Para cada pregunta devolvé un objeto con: id, valores, origen, campo y nota.
 
 ORIGEN (elegí uno):
 - "ficha": el valor es EXACTAMENTE el texto de un campo de la ficha, copiado sin ningún cambio. En "campo" poné la clave (p. ej. "general.email_contacto").
-- "adaptado": tomaste el dato de UN campo de la ficha y lo recortaste, resumiste, tradujiste o cambiaste de formato, sin agregar nada que no esté en ese campo. En "campo" poné la clave.
-- "propuesta_ia": la ficha no tiene el dato pero se puede inferir razonablemente de ella. Nunca para nombres de personas, emails, teléfonos, links ni cifras.
+- "adaptado": el campo dice EXPLÍCITAMENTE lo que pide la pregunta, y vos lo recortaste, resumiste, tradujiste o cambiaste de formato, sin agregar nada que no esté en ese campo. En "campo" poné la clave.
+- "propuesta_ia": la ficha no lo dice explícitamente pero se puede deducir de ella (por ejemplo, suponer un rol, una autoría o una categoría). Podés usar nombres que estén en la ficha, pero nunca inventes nombres, emails, teléfonos, links ni cifras.
 - "sin_dato": la ficha no tiene información para responder. "valores" vacío.
 - "archivo_manual": preguntas de tipo "archivo". "valores" vacío; en "nota" sugerí qué material de la ficha subir.
 
@@ -138,17 +138,25 @@ export const ESQUEMA_RESPUESTA = {
 const RE_EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g
 const RE_URL = /https?:\/\/[^\s"'<>]+/g
 const RE_DIGITOS = /\d[\d\s().-]*\d|\d/g
-const CONECTORES = new Set(['De', 'Del', 'La', 'Las', 'Los', 'Y', 'E', 'El'])
+const PARTICULAS = new Set(['de', 'del', 'la', 'las', 'los', 'da', 'di', 'van', 'von'])
 
-/** Palabras con mayúscula que no empiezan oración: candidatas a nombres propios. */
-function palabrasConMayuscula(texto: string): string[] {
+/** Candidatos a nombre propio: dos o más palabras seguidas con mayúscula (se permiten "de", "del", etc. en el medio). */
+function nombresPropios(texto: string): string[] {
   const salida: string[] = []
-  for (const oracion of texto.split(/[.!?:;\n]+/)) {
-    const palabras = oracion.trim().split(/\s+/).slice(1)
-    for (const w of palabras) {
-      const limpia = w.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '')
-      if (limpia.length > 2 && /^\p{Lu}/u.test(limpia) && !CONECTORES.has(limpia)) salida.push(limpia)
+  for (const linea of texto.split(/[.!?:;,\n()"'«»]+/)) {
+    let actual: string[] = []
+    const cerrar = () => {
+      while (actual.length && PARTICULAS.has(actual[actual.length - 1])) actual.pop()
+      if (actual.filter((w) => /^\p{Lu}/u.test(w)).length >= 2) salida.push(actual.join(' '))
+      actual = []
     }
+    for (const w of linea.trim().split(/\s+/)) {
+      const limpia = w.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '')
+      if (/^\p{Lu}\p{Ll}/u.test(limpia)) actual.push(limpia)
+      else if (actual.length && PARTICULAS.has(limpia)) actual.push(limpia)
+      else cerrar()
+    }
+    cerrar()
   }
   return salida
 }
@@ -167,7 +175,7 @@ export function datosAjenosALaFicha(valor: string, textoFicha: string, incluirNo
       ajenos.push(d.trim())
   }
   if (incluirNombres)
-    for (const w of palabrasConMayuscula(sinLinksNiEmails)) if (!ficha.includes(normalizar(w))) ajenos.push(w)
+    for (const n of nombresPropios(sinLinksNiEmails)) if (!ficha.includes(normalizar(n))) ajenos.push(n)
   return [...new Set(ajenos)]
 }
 
