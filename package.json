@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "leer-form": "node tools/leer-form.ts",
-    "test": "node --test tests/estructura.test.ts"
+    "proponer": "node --env-file-if-exists=.env.local tools/proponer.ts",
+    "test": "node --test tests/estructura.test.ts tests/respuestas.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

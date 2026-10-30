@@ -27,11 +27,11 @@ Nada se da por funcionando sin una corrida que lo demuestre (log o prueba). No p
 - Producto comercial, calidad "impecable" = cero valores incorrectos sin aviso, ≥95% de campos correctos sobre un corpus de ~30 formularios reales.
 - Leer la estructura del formulario desde el DOM (Google Forms: `FB_PUBLIC_LOAD_DATA_`), no desde capturas. LLM solo para mapear pregunta → respuesta y adaptar textos a límites/idioma (1 llamada de texto por formulario, salida estructurada).
 - Archivos: pausa explícita para que la persona los suba y luego seguir.
-- Arquitectura recomendada (decisión pendiente del usuario, que prefería "sin extensión"): app web como centro (ficha, materiales, historial, cobro) + extensión de Chrome que completa en el navegador del artista. No guardar sesiones de Google de usuarios en servidores.
+- **Arquitectura decidida (30/10/2026): app web + extensión de Chrome.** App web como centro (ficha, materiales, historial, cobro); la extensión completa en el navegador del artista, ya logueado. No guardar sesiones de Google de usuarios en servidores. El motor de la Etapa 1 se diseña para poder correr dentro de la extensión.
 - Playwright queda como banco de pruebas automáticas contra el corpus.
 
 ## Próximo paso
-1. Crear un Google Form de prueba propio (copia del de FITCRUZ, armado a partir de capturas; script de Apps Script + campos de archivo agregados a mano). **No probar más contra convocatorias reales.**
+1. Formulario de prueba creado: https://docs.google.com/forms/d/e/1FAIpQLScGyoVrpvBNlHo-zruCVa8G07vl6mhcddmr2Uyt8Kbv8LsJKg/viewform (falta agregar a mano las 5 preguntas "Subir archivo"). **No probar más contra convocatorias reales.**
 2. Etapa 1 sobre ese formulario: detectar estancamiento por firma de sección, pausa para archivos, lectura por DOM, 1 llamada a Gemini, cerrar el contexto entre corridas, borrar borrador solo en la primera corrida.
 Criterio: corrida completa hasta "Enviar" con solo los archivos como paso manual y < 5 llamadas a Gemini.
 
