@@ -3,6 +3,10 @@
  * Corto y con los tipos que el formulario A no tiene.
  * Uso: script.google.com → Nuevo proyecto → pegar esto → Ejecutar "crearFormB" → autorizar.
  * Al terminar, en "Registro de ejecución" aparece el link público.
+ *
+ * Creado el 30/10/2026:
+ *   Público: https://docs.google.com/forms/d/e/1FAIpQLSdB-Spfi_-8eemcSWvTf_1lakNyaaDpQuhY7V5EkIOWay6S0Q/viewform
+ *   Edición: https://docs.google.com/forms/d/1-469xlMKgRKAQjL4UKgix0EbKr-fcwlLChMLHnlXyLI/edit
  */
 function crearFormB() {
   var form = FormApp.create('PRUEBA StageFlow — Formulario B (tipos)');

@@ -29,7 +29,7 @@ export type Validacion =
   | { tipo: 'email' }
   | { tipo: 'url' }
   | { tipo: 'numero_entero' }
-  | { tipo: 'numero'; condicion: string; valores: string[] }
+  | { tipo: 'numero'; condicion: string; valores: number[] }
   | { tipo: 'max_caracteres'; valor: number }
   | { tipo: 'min_caracteres'; valor: number }
   | { tipo: 'texto'; condicion: string; valor: string }
@@ -149,7 +149,7 @@ function leerValidaciones(crudas: unknown): Validacion[] {
     if (grupo === 2 && codigo === 103) return { tipo: 'url' }
     if (grupo === 2 && CONDICION_TEXTO[codigo]) return { tipo: 'texto', condicion: CONDICION_TEXTO[codigo], valor: a[0] ?? '' }
     if (grupo === 1 && codigo === 10) return { tipo: 'numero_entero' }
-    if (grupo === 1 && CONDICION_NUMERO[codigo]) return { tipo: 'numero', condicion: CONDICION_NUMERO[codigo], valores: a }
+    if (grupo === 1 && CONDICION_NUMERO[codigo]) return { tipo: 'numero', condicion: CONDICION_NUMERO[codigo], valores: a.map(Number) }
     if (grupo === 6 && codigo === 202) return { tipo: 'max_caracteres', valor: Number(a[0]) }
     if (grupo === 6 && codigo === 203) return { tipo: 'min_caracteres', valor: Number(a[0]) }
     if (grupo === 4 && CONDICION_REGEX[codigo]) return { tipo: 'expresion_regular', condicion: CONDICION_REGEX[codigo], valor: a[0] ?? '' }

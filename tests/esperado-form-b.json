@@ -6,7 +6,7 @@
     { "titulo": "PRUEBA StageFlow — Formulario B (tipos)", "preguntas": [
       { "titulo": "¿En qué disciplinas trabaja la compañía?", "tipo": "casillas", "obligatoria": true, "opciones": ["Teatro", "Danza", "Música", "Circo"], "validaciones": [{ "tipo": "casillas", "condicion": "al_menos", "valor": 1 }] },
       { "titulo": "Provincia", "tipo": "desplegable", "obligatoria": true, "opciones": ["Buenos Aires", "Córdoba", "Santa Cruz", "Otra"], "validaciones": [] },
-      { "titulo": "Año de estreno", "tipo": "respuesta_corta", "obligatoria": false, "validaciones": [{ "tipo": "numero", "condicion": "entre", "valores": ["1950", "2027"] }] }
+      { "titulo": "Año de estreno", "tipo": "respuesta_corta", "obligatoria": false, "validaciones": [{ "tipo": "numero", "condicion": "entre", "valores": [1950, 2027] }] }
     ]},
     { "titulo": "Fechas y valoración", "preguntas": [
       { "titulo": "Fecha de estreno", "tipo": "fecha", "obligatoria": true, "validaciones": [] },
