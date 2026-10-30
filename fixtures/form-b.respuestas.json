@@ -1,0 +1,153 @@
+{
+  "formulario": "PRUEBA StageFlow — Formulario B (tipos)",
+  "modelo": "gemini-3.8-flash",
+  "completo": true,
+  "faltantes": [],
+  "llamadasIA": 1,
+  "tokens": {
+    "entrada": 1888,
+    "salida": 446,
+    "pensamiento": 0
+  },
+  "costoUSD": 0.0030885,
+  "msIA": 4486,
+  "respuestas": [
+    {
+      "entry": "entry.1121520150",
+      "pregunta": "¿En qué disciplinas trabaja la compañía?",
+      "tipo": "casillas",
+      "obligatoria": true,
+      "respuesta": [
+        "Teatro"
+      ],
+      "origen": "propuesta_ia",
+      "campo": null,
+      "nota": "Se deduce del resumen de trayectoria que menciona 'trayectoria en el teatro'.",
+      "revisar": true,
+      "motivos": [],
+      "avisos": []
+    },
+    {
+      "entry": "entry.474601466",
+      "pregunta": "Provincia",
+      "tipo": "desplegable",
+      "obligatoria": true,
+      "respuesta": "Córdoba",
+      "origen": "adaptado",
+      "campo": "espectaculo.ciudad_origen",
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": []
+    },
+    {
+      "entry": "entry.223954454",
+      "pregunta": "Año de estreno",
+      "tipo": "respuesta_corta",
+      "obligatoria": false,
+      "respuesta": null,
+      "origen": "sin_dato",
+      "campo": null,
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": []
+    },
+    {
+      "entry": "entry.55975959",
+      "pregunta": "Fecha de estreno",
+      "tipo": "fecha",
+      "obligatoria": true,
+      "respuesta": null,
+      "origen": "sin_dato",
+      "campo": null,
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": [
+        "Obligatoria y sin dato: hay que completarla a mano"
+      ]
+    },
+    {
+      "entry": "entry.452777983",
+      "pregunta": "Horario preferido de función",
+      "tipo": "hora",
+      "obligatoria": false,
+      "respuesta": null,
+      "origen": "sin_dato",
+      "campo": null,
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": []
+    },
+    {
+      "entry": "entry.380367010",
+      "pregunta": "¿Qué tan adaptable es la obra a espacios no convencionales?",
+      "tipo": "escala",
+      "obligatoria": true,
+      "respuesta": null,
+      "origen": "sin_dato",
+      "campo": null,
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": [
+        "Obligatoria y sin dato: hay que completarla a mano"
+      ]
+    },
+    {
+      "entry": null,
+      "filas": [
+        {
+          "entry": "entry.806976356",
+          "titulo": "Enero"
+        },
+        {
+          "entry": "entry.852949929",
+          "titulo": "Febrero"
+        },
+        {
+          "entry": "entry.1234861109",
+          "titulo": "Marzo"
+        }
+      ],
+      "pregunta": "Disponibilidad por mes",
+      "tipo": "cuadricula_opcion",
+      "obligatoria": true,
+      "respuesta": null,
+      "origen": "sin_dato",
+      "campo": null,
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": [
+        "Obligatoria y sin dato: hay que completarla a mano"
+      ]
+    },
+    {
+      "entry": null,
+      "filas": [
+        {
+          "entry": "entry.494853336",
+          "titulo": "Sala chica"
+        },
+        {
+          "entry": "entry.979075374",
+          "titulo": "Sala grande"
+        }
+      ],
+      "pregunta": "Necesidades técnicas por sala",
+      "tipo": "cuadricula_casillas",
+      "obligatoria": false,
+      "respuesta": null,
+      "origen": "sin_dato",
+      "campo": null,
+      "nota": null,
+      "revisar": true,
+      "motivos": [],
+      "avisos": []
+    }
+  ],
+  "msTotal": 4496
+}
