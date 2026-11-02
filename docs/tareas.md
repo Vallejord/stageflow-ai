@@ -1,11 +1,12 @@
 # Tareas — StageFlow AI
 
-Tablero de tareas que mission control (chat general) le asigna al **chat desarrollo**. Cada tarea se cierra solo con la evidencia que piden sus criterios de aceptación. Referencia del plan: `claude/plan-mvp.md`.
+Tablero de tareas que mission control (chat general) asigna al **chat desarrollo** o a **Claude Code en Cursor** (según se indique en cada tarea). Copia en el repo: `docs/tareas.md`. Cada tarea se cierra solo con la evidencia que piden sus criterios de aceptación. Referencia del plan: `claude/plan-mvp.md`.
 
 | ID | Paso del plan | Tarea | Estado |
 |---|---|---|---|
 | T1 | 1. Motor | Lector de estructura de Google Forms | **Cerrada y aprobada (30/10/2026)** — ver "Cierre" y "Verificación" abajo |
-| T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | Asignada (30/10/2026) |
+| T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | **Cerrada y aprobada (31/10/2026)** |
+| T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | Asignada (31/10/2026) |
 
 ---
 
@@ -98,3 +99,82 @@ Hallazgo durante la tarea: Google guarda los límites numéricos como "1950.0"; 
 **Evidencia para cerrar:** el archivo de lo esperado, las tablas de comparación del A y del B, la salida de las tres corridas, tokens y costo, y la prueba del criterio 8.
 
 **Fuera de esta tarea:** escribir en el formulario, navegación entre páginas, extensión, Firebase, Drive.
+
+### Cierre (30/10/2026)
+Código: `lib/motor/google-forms/respuestas.ts` (pedido + revisión por código, sin Node ni proveedor de IA), `lib/motor/ia/gemini.ts` (llamada, solo servidor), `lib/motor/proponer.ts`, `tools/proponer.ts`, `tests/respuestas.test.ts`. Último commit: `52e5458`.
+
+| Criterio | Resultado | Evidencia |
+|---|---|---|
+| 1. Esperado antes de correr | ✅ escrito y commiteado antes de la primera llamada (`8a46e56`); revisado por Ezequiel | `tests/respuestas-esperadas-form-a.json` |
+| 2. Formulario A | ✅ 23/23 en las tres corridas finales | `fixtures/comparacion-respuestas-form-a.md`, `-form-a-2.md`, `-form-a-3.md` |
+| 3. Cero inventos | ✅ 0 errores de revisión en las tres corridas; la revisión detecta emails, links, teléfonos, números y nombres (2+ palabras) ajenos a la ficha (probado con IA simulada) | `tests/respuestas.test.ts` |
+| 4. Formulario B | ✅ 0 errores de opciones o formatos; lo que no está en la ficha queda `sin_dato` | `fixtures/form-b.respuestas.json` |
+| 5. Una llamada | ✅ 1 por formulario, sin reintentos. A: ~2.750 tokens de entrada / ~1.930 de salida ≈ USD 0,0093. B: ≈ USD 0,0031 | salida de `proponer` |
+| 6. < 20 s | ✅ A: 12,9–13,6 s; B: 4,5 s (con razonamiento "LOW") | salida de `proponer` |
+| 7. Repetible | ✅ las tres corridas dan los mismos valores en las 9 respuestas con origen `ficha` | `npm test` |
+| 8. Fallo de la IA | ✅ clave inválida → mensaje claro, nada guardado; tiempo agotado → corta el pedido y avisa; respuesta ilegible → error | corrida con clave falsa + `npm test` |
+
+`npm test` en la máquina del usuario: 14 de 14.
+
+Hallazgos durante la tarea:
+- Con el razonamiento por defecto, gemini-3.8-flash a veces "piensa" 2.000+ tokens y tarda 24–30+ s (5 de 7 llamadas pasaron 30 s). Se fijó `thinkingLevel: LOW` (MINIMAL no está soportado en este modelo). Las llamadas cortadas por tiempo probablemente se cobraron. Gasto total de la tarea: menos de USD 0,20.
+- La IA etiquetó como "adaptado" una autoría deducida. Se corrigió la consigna: "adaptado" solo si el campo lo dice explícitamente; las deducciones van como `propuesta_ia` (puede usar nombres de la ficha, nunca inventarlos).
+- "revisar" lo decide el código, no la IA. Se separaron `motivos` (errores de la IA) y `avisos` (p. ej. "obligatoria y sin dato").
+- Variación aceptable entre corridas en las propuestas: Género salió una vez como "Drama" (propuesta, a revisar) y dos veces vacío.
+
+Pendientes para después de la T2 (datos confirmados por Ezequiel el 30/10; no se cargaron para no alterar la prueba):
+- Teléfono correcto: +5491137581011 (la ficha tiene +549111537581011).
+- Género: Biodrama ficcional. Autora: Melisa Schneider.
+
+### Verificación de mission control (31/10/2026)
+Revisado de forma independiente:
+- **Pruebas:** 14/14 en una copia limpia del último commit (`git archive HEAD`).
+- **Lo esperado se escribió antes:** `8a46e56` (22:57) es anterior al primer código que llama a la IA (`635f248`, 23:06). Entre esas versiones el archivo solo cambió de formato y sumó una regla verificable para "Ciudad" (`contiene_alguno`); ningún valor esperado se modificó para acomodarse a la IA. Sin cambios posteriores.
+- **Respuestas reales del A, revisadas una por una:** 9 de la ficha tal cual, 6 adaptadas, 4 propuestas de la IA a revisar, 1 sin dato (Género), 4 archivos manuales. Las propuestas usan solo nombres que están en la ficha ("Autor(a): Melisa Schneider"; ficha artística "Dirección: Malena Vieytes / Actriz: Melisa Schneider", deducido de la trayectoria). Ningún dato inventado.
+- **B:** 1 llamada, USD 0,003, opciones válidas; casi todo `sin_dato`, como corresponde a una ficha sin esos datos.
+- **Observaciones para la T3:** (1) la aceptación de bases no debe tildarla el sistema: es una declaración del artista; (2) 10 de 19 respuestas quedan "a revisar": aceptable ahora, pero la ficha real desde Drive debe bajar ese número; (3) 13,6 s está cerca del límite de 20 s.
+
+**T2 aprobada.**
+
+---
+
+## T3 — Completar y verificar el formulario de punta a punta (con Claude Code en Cursor)
+
+**Objetivo:** cerrar el paso 1 del plan (Motor). Con las respuestas de la T2, completar el Formulario A en el navegador página por página, verificar cada campo, pausar donde hace falta una persona y frenar en "Enviar" sin apretarlo.
+
+**Herramienta:** Claude Code en la terminal de Cursor, en la carpeta del repo. Empezar en modo plan.
+
+**Paso 0 — Ficha:** cargar en `data/obra-demo.json` los datos confirmados por Ezequiel: teléfono `+5491137581011`, género "Biodrama ficcional", autora "Melisa Schneider". Commit propio. Las pruebas de la T2 deben seguir pasando (usan corridas guardadas).
+
+**Qué hay que construir**
+1. **Módulo de completado** (`lib/motor/google-forms/completar.ts`) que corra **dentro de la página** (solo DOM, sin Node ni Playwright, para reutilizarlo en la extensión). Dada la lista de respuestas y la página abierta:
+   - Ubica cada campo de la sección visible por su `entry` (no por selectores inventados).
+   - Completa según el tipo: respuesta corta, párrafo, opción múltiple, casillas, desplegable, fecha, hora, escala y cuadrículas.
+   - Vuelve a leer cada campo después de escribirlo y devuelve, por campo: esperado, leído y estado (`ok`, `distinto`, `no_encontrado`).
+   - Respeta la marca de la T2: completa `ficha`, `adaptado` y `propuesta_ia`; deja vacío `sin_dato`; no toca `archivo_manual`.
+2. **Confirmaciones del artista:** preguntas de aceptación de bases, términos o declaraciones juradas (por ejemplo "He leído…", "Acepto…", "Declaro…") **no se completan**: quedan como `confirmacion_humana`, igual que los archivos.
+3. **Recorrido** (`tools/completar.ts`, con Playwright y la sesión guardada): abre el link, propone respuestas (1 llamada a la IA, o reutiliza un archivo de respuestas guardado con `--respuestas`), completa sección por sección y avanza con "Siguiente".
+   - **Detecta si avanzó** comparando la firma de la sección (título + entries visibles), no la URL. Si no avanzó, lee los mensajes de error de Google y dice qué pregunta bloquea.
+   - **Pausa para la persona** cuando la sección tiene archivos obligatorios sin subir o una confirmación pendiente: muestra qué hacer ("Subí el dossier en PDF en la pregunta X"), espera hasta 10 minutos revisando cada pocos segundos, y sigue sola cuando la persona lo hizo.
+   - **Nunca** hace clic en "Enviar" ni en "Borrar formulario". Si encuentra datos de una corrida anterior (borrador), los sobrescribe y verifica.
+   - Al llegar a la última página, frena con "Enviar" visible y deja el navegador abierto.
+4. **Informe** al final: tabla por campo (página, pregunta, esperado, leído, estado) y resumen (completados y verificados, a revisar, pendientes de la persona, llamadas a la IA, costo, tiempo).
+5. **Formulario B:** como la ficha no tiene esos datos, usar un archivo de respuestas de prueba escrito a mano (`tests/respuestas-prueba-form-b.json`) con un valor para cada tipo de pregunta, para demostrar que el completado funciona con todos los tipos.
+
+**Criterios de aceptación**
+1. **Formulario A, primera corrida:** llega a la página 5 con "Enviar" visible. Las únicas pausas son las 4 preguntas de archivo y la aceptación de bases; tras hacerlas la persona, el recorrido sigue solo.
+2. **Formulario A, segunda corrida seguida** (sin tocar nada entre medio): llega a la página 5 sin pausas, porque el borrador conserva archivos y confirmación, y vuelve a verificar todos los campos.
+3. En ambas corridas, **todos los campos completados quedan `ok`** (lo leído coincide con lo esperado). Cero `distinto` o `no_encontrado`.
+4. **Formulario B:** cada tipo de pregunta se completa y verifica `ok` con el archivo de respuestas de prueba.
+5. **Detección de bloqueo probada:** con una respuesta obligatoria vacía a propósito, el recorrido no gira en falso: informa en menos de 10 segundos qué pregunta bloquea "Siguiente".
+6. Nunca se hace clic en "Enviar" ni en "Borrar formulario" (verificable en el código y en el registro de la corrida).
+7. Como mucho **1 llamada a la IA** por corrida. Tiempo total sin contar la espera de la persona: **menos de 90 segundos**.
+8. El módulo de completado no importa nada de Node ni de Playwright, y tiene pruebas automáticas sobre HTML guardado de secciones reales.
+9. `npm test` pasa completo (las pruebas de T1 y T2 siguen pasando).
+10. No se modifica el agente viejo (`app/api/agent/run/route.ts`).
+
+**Evidencia para cerrar:** informes de las dos corridas del A y la del B, la prueba del criterio 5, captura de la página 5 completa con "Enviar" visible, salida de `npm test` y commits. Actualizar "Cierre" en `docs/tareas.md`.
+
+**Fuera de esta tarea:** extensión, interfaz, Firebase, Drive, Microsoft Forms.
+
+**Con esto se cierra el paso 1 (Motor)** del plan.

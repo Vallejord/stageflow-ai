@@ -1,39 +1,38 @@
 # StageFlow AI — contexto para Claude Code
 
-Herramienta para que artistas (teatro, música, danza, escritura, artes visuales) completen postulaciones a festivales y subsidios con los datos que cargaron una vez. **Regla de oro: el sistema nunca envía el formulario. Completa, verifica, avisa qué falta y la persona aprieta "Enviar".**
+Herramienta para que artistas (teatro, música, danza, escritura, artes visuales) postulen a festivales, convocatorias y subsidios con el menor trabajo posible: su información sale de su Google Drive y StageFlow completa cada formulario. **Regla de oro: el sistema nunca envía. Completa, verifica, avisa qué falta y la persona aprieta "Enviar".**
 
-Documentos de referencia: `stageflow_ai_contexto_para_claude_code.md` (en esta carpeta) y, en el Proyecto "agente de postulaciones" de claude.ai, `claude/evaluacion-funcional-2026-10-30.md` (evaluación, stack, negocio, etapas). Nota: el plan "Opción 1" de ese contexto ya está implementado; ver abajo por qué no alcanza.
+## Leé antes de trabajar
+1. `docs/plan-mvp.md` — **referencia única del plan.** Si algo no está ahí, no se hace.
+2. `docs/tareas.md` — tablero de tareas con criterios de aceptación. Trabajá **solo la tarea que te asignen**, de a una.
 
-## Regla de trabajo
-Nada se da por funcionando sin una corrida que lo demuestre (log o prueba). No prometer en la UI cosas que el código no hace.
+Estos dos archivos son copia de los documentos del Proyecto "agente de postulaciones" en claude.ai, donde trabaja el chat "mission control" (planifica, decide y aprueba). Si cerrás una tarea, actualizá su sección "Cierre" en `docs/tareas.md` con la evidencia; mission control la verifica y sincroniza.
 
-## Estado real del código (30/10/2026)
-- Next.js 16 + React 19 + Tailwind 4 + shadcn. Playwright (Chrome real, `launchPersistentContext` en `.browser-user-data/`). Gemini `gemini-3.8-flash` vía `@google/genai`.
-- `app/api/agent/run/route.ts`: bucle screenshot → Gemini → fill/click. Ya implementa el plan "Opción 1": borrar borrador, read-after-write (status "revisar"), archivos a `manual_actions_required`, corte ante "Enviar". Los campos se ubican por etiqueta de pregunta (`role=listitem`); el selector de Gemini es respaldo.
-- Datos: siempre `data/obra-demo.json` (Monte Virgen, "Deseo, mantente firme"). El wizard no envía perfil ni honorarios.
-- Wizard paso 2 (pre-evaluación) es fijo/simulado. `/api/ingest` no se usa y no descarga la convocatoria.
-- Código muerto: `components/agent/*`, `lib/form-mapping.ts`.
-- `next.config.mjs` tiene `typescript.ignoreBuildErrors: true`.
+## Reglas de trabajo
+- **Nada se da por funcionando sin una corrida que lo demuestre.** Al cerrar, mostrá la evidencia que piden los criterios.
+- Antes de codear, explicá en pocas líneas el plan y cómo vas a probar cada paso.
+- **No probar contra convocatorias reales.** Solo los formularios de prueba A y B (links en `docs/tareas.md`).
+- Nunca hacer clic en "Enviar" de un formulario.
+- No abrir frentes fuera de la tarea asignada. Si algo del plan parece mal, decilo en vez de cambiarlo por tu cuenta.
+- Contar y reportar las llamadas a la IA y su costo.
+- Un commit por paso significativo, con mensaje claro.
 
-## Lo que se aprendió en las pruebas (logs/agent.log, FITCRUZ 2027)
-- Texto y radio salen bien y verificados (secciones 1–3).
-- **Archivos en Google Forms no se pueden subir con Playwright**: el botón abre el selector de Drive en un iframe; no hay `input[type=file]`. Los campos son obligatorios → "Siguiente" no avanza.
-- **El agente no detecta el estancamiento**: la URL siempre es `/formResponse`; cuenta "página 4, 5, 6" siendo la misma sección y termina por timeout (300 s) como "ready_for_review". Métricas infladas por doble conteo.
-- Cupo gratis de Gemini: 20 req/día; una corrida usa 15–20 (hasta 4 análisis por sección). Hay 429 y 503. Hace falta facturación con tope.
-- El contexto persistente nunca se cierra: una segunda corrida con la ventana abierta probablemente choca con el bloqueo del perfil.
-- "Borrar formulario" en cada corrida borra archivos que la persona haya subido a mano.
+## Estado (30/10/2026)
+- **T1 cerrada y aprobada:** lector de estructura de Google Forms en `lib/motor/google-forms/estructura.ts`; comando `npm run leer-form -- <link> <nombre>`; pruebas con `npm test`; fixtures en `fixtures/`.
+- **T2 cerrada y aprobada:** respuestas para cada pregunta con una llamada a Gemini (`lib/motor/google-forms/respuestas.ts`, `lib/motor/ia/gemini.ts`, `npm run proponer`).
+- **T3 asignada a Claude Code (vos):** completar y verificar el formulario de punta a punta. Ver `docs/tareas.md`.
+- El agente viejo (`app/api/agent/run/route.ts`, captura → Gemini → Playwright) queda como referencia histórica; no se sigue extendiendo.
 
-## Dirección acordada
-- Producto comercial, calidad "impecable" = cero valores incorrectos sin aviso, ≥95% de campos correctos sobre un corpus de ~30 formularios reales.
-- Leer la estructura del formulario desde el DOM (Google Forms: `FB_PUBLIC_LOAD_DATA_`), no desde capturas. LLM solo para mapear pregunta → respuesta y adaptar textos a límites/idioma (1 llamada de texto por formulario, salida estructurada).
-- Archivos: pausa explícita para que la persona los suba y luego seguir.
-- **Arquitectura decidida (30/10/2026): app web + extensión de Chrome.** App web como centro (ficha, materiales, historial, cobro); la extensión completa en el navegador del artista, ya logueado. No guardar sesiones de Google de usuarios en servidores. El motor de la Etapa 1 se diseña para poder correr dentro de la extensión.
-- Playwright queda como banco de pruebas automáticas contra el corpus.
+## Decisiones tomadas
+- Arquitectura: **app web + extensión de Chrome** (completa en el navegador del artista). Sin sesiones de Google de usuarios en servidores ni navegadores en la nube.
+- Stack: **Next.js** (app web) + **Firebase** (Auth, Firestore, Cloud Storage, App Hosting) + **Gemini** (siempre desde el servidor) + **Drive API**, todo en un proyecto de Google Cloud. Extensión: Chrome MV3 + React + TypeScript (WXT).
+- La estructura del formulario se lee de la página (sin IA); la IA solo decide qué responder.
+- El código del motor no usa nada exclusivo de Node, para poder correr dentro de la extensión.
 
-## Próximo paso
-1. Formulario de prueba creado: https://docs.google.com/forms/d/e/1FAIpQLScGyoVrpvBNlHo-zruCVa8G07vl6mhcddmr2Uyt8Kbv8LsJKg/viewform (falta agregar a mano las 5 preguntas "Subir archivo"). **No probar más contra convocatorias reales.**
-2. Etapa 1 sobre ese formulario: detectar estancamiento por firma de sección, pausa para archivos, lectura por DOM, 1 llamada a Gemini, cerrar el contexto entre corridas, borrar borrador solo en la primera corrida.
-Criterio: corrida completa hasta "Enviar" con solo los archivos como paso manual y < 5 llamadas a Gemini.
+## Lo aprendido (no repetir)
+- Google Forms: los campos de archivo abren el selector de Drive en un iframe; no se pueden completar con Playwright. Son paso manual.
+- Si una pregunta obligatoria queda vacía, "Siguiente" no avanza y la URL no cambia (`/formResponse`): detectar por contenido de la sección, no por URL.
+- "Borrar formulario" borra también lo que la persona subió a mano.
 
 ## Entorno
-Windows, carpeta `C:\Users\USUARIO\Documents\DEV\stageflow-ai`, `pnpm dev`, clave en `.env.local` (`GEMINI_API_KEY`). Equipo: el dueño del producto + un BA senior.
+Windows. Carpeta `C:\Users\USUARIO\Documents\DEV\stageflow-ai`. Usar `npm` (pnpm no está instalado). Clave en `.env.local` (`GEMINI_API_KEY`), facturación prepaga con tope mensual de USD 10. Perfil de navegador con sesión de Google en `.browser-user-data/` (no se sube a git).
