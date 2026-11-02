@@ -192,3 +192,16 @@ test('Archivo subido (HTML real del A, página 4): se detecta como hecho', async
   assert.deepEqual(pend.map((p: any) => [p.entry, p.tipo, p.hecho]), [['entry.187110554', 'archivo', true]])
   await page.close()
 })
+
+test('Selector de archivos abierto (HTML real del A): no cambia la firma de la sección', async () => {
+  const firma = async (fixture: string) => {
+    const page = await abrir(fixture)
+    const s = await page.evaluate(() => (window as any).__stageflowCompletar.leerSeccion())
+    await page.close()
+    return s
+  }
+  const sin = await firma('form-a-p3')
+  const con = await firma('form-a-p3-selector-abierto')
+  assert.equal(sin.titulo, 'PRUEBA StageFlow — Clon FITCRUZ 2027 / Datos de la obra (Production details)')
+  assert.equal(con.firma, sin.firma)
+})

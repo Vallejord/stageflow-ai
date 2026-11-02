@@ -1,0 +1,673 @@
+{
+  "resumen": {
+    "formulario": "PRUEBA StageFlow — Clon FITCRUZ 2027",
+    "llegoAEnviar": true,
+    "bloqueo": null,
+    "completadosYVerificados": 38,
+    "completados": 38,
+    "distintosONoEncontrados": [],
+    "aRevisar": 8,
+    "sinDato": [],
+    "pendientesPersona": [
+      {
+        "pagina": 5,
+        "pregunta": "Dossier de la obra (historial de la obra y compañía, archivos de prensa y crítica, información adicional relevante. Archivo PDF) (Performance dossier - PDF file)",
+        "tipo": "archivo",
+        "hecho": true
+      },
+      {
+        "pagina": 5,
+        "pregunta": "Adjuntar al presente formulario tres (3) fotografías de la obra en formato digital con una resolución mínima de 300 DPI (3 300 DPI performance photos)",
+        "tipo": "archivo",
+        "hecho": true
+      },
+      {
+        "pagina": 7,
+        "pregunta": "Adjuntar los documentos que certifiquen el permiso de derechos de autor para presentar la obra. (Archivo PDF). (Professional stage licence)",
+        "tipo": "archivo",
+        "hecho": true
+      },
+      {
+        "pagina": 9,
+        "pregunta": "Ficha técnica (planta escenografía, plano de iluminación y requerimientos técnicos. Archivo PDF) (Technical rider (Set design, props and lighting requirements))",
+        "tipo": "archivo",
+        "hecho": true
+      }
+    ],
+    "pausas": 8,
+    "llamadasIA": 1,
+    "tokens": {
+      "entrada": 2784,
+      "salida": 1973,
+      "pensamiento": 0
+    },
+    "costoUSD": 0.00948675,
+    "msIA": 14638,
+    "msTotal": 367235,
+    "msEsperandoPersona": 342150,
+    "msSinPersona": 25086,
+    "clicsEnBotones": [
+      "clic en \"Siguiente\"",
+      "clic en \"Siguiente\"",
+      "clic en \"Siguiente\""
+    ]
+  },
+  "filas": [
+    {
+      "entry": "entry.530285729",
+      "pregunta": "He leído minuciosamente las bases de la convocatoria y estoy de acuerdo con todo lo explicado en dicho documento. (I have carefully read the call guidelines and agree with everything explained in that document.)",
+      "tipo": "opcion_multiple",
+      "accion": "confirmacion_humana",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 1
+    },
+    {
+      "entry": "entry.1188998454",
+      "pregunta": "Nombres y apellidos del representante del grupo (Names and surnames of the group representative)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Melisa Schneider",
+      "leido": "Melisa Schneider",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.1952567098",
+      "pregunta": "País (Country)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Argentina",
+      "leido": "Argentina",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.1396807213",
+      "pregunta": "Ciudad (City)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Capilla del Monte y San Marcos Sierras",
+      "leido": "Capilla del Monte y San Marcos Sierras",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.1024514287",
+      "pregunta": "Teléfono celular (Cell phone)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "+5491137581011",
+      "leido": "+5491137581011",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.941314172",
+      "pregunta": "Correo electrónico (E-mail)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "meli_schneider@hotmail.com",
+      "leido": "meli_schneider@hotmail.com",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.1879131417",
+      "pregunta": "Nombre de la obra (Production title)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Deseo, mantente firme",
+      "leido": "Deseo, mantente firme",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.734797885",
+      "pregunta": "Disciplina (Theatrical discipline)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Teatro",
+      "leido": "Teatro",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.1397899750",
+      "pregunta": "Género (Genre)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Biodrama ficcional",
+      "leido": "Biodrama ficcional",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.2060865434",
+      "pregunta": "Rango de edad del público recomendado (Recommended audience age)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Mayores de 15 años",
+      "leido": "Mayores de 15 años",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.815342644",
+      "pregunta": "Reseña de la obra (máximo 500 carac.) (Production´s synopsis)",
+      "tipo": "parrafo",
+      "accion": "completar",
+      "esperado": "'Deseo, mantente firme' nos invita a viajar guiados por una turista intrépida y soñadora, quien nos sumerge en el universo más íntimo de Frida Kahlo. En un diálogo atemporal entre dos mujeres latinas, el arte es la trama que las sostiene y las salva mientras entretejen en escena dolores, pasiones y amores, creando un cuadro vivo y latente.",
+      "leido": "'Deseo, mantente firme' nos invita a viajar guiados por una turista intrépida y soñadora, quien nos sumerge en el universo más íntimo de Frida Kahlo. En un diálogo atemporal entre dos mujeres latinas, el arte es la trama que las sostiene y las salva mientras entretejen en escena dolores, pasiones y amores, creando un cuadro vivo y latente.",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.1315410192",
+      "pregunta": "Duración del espectáculo (Performance length)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "60 minutos",
+      "leido": "60 minutos",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.184215241",
+      "pregunta": "Dossier de la obra (historial de la obra y compañía, archivos de prensa y crítica, información adicional relevante. Archivo PDF) (Performance dossier - PDF file)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 3
+    },
+    {
+      "entry": "entry.1961142150",
+      "pregunta": "Enlace del video con la obra completa, sin cortes ni cambios de cámara, visualizable en Youtube o Vimeo. (Link to the youtube or vimeo video of the proposed production)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG",
+      "leido": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG",
+      "estado": "ok",
+      "pagina": 3
+    },
+    {
+      "entry": "entry.711371698",
+      "pregunta": "Adjuntar al presente formulario tres (3) fotografías de la obra en formato digital con una resolución mínima de 300 DPI (3 300 DPI performance photos)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 3
+    },
+    {
+      "entry": "entry.1879131417",
+      "pregunta": "Nombre de la obra (Production title)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Deseo, mantente firme",
+      "leido": "Deseo, mantente firme",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.734797885",
+      "pregunta": "Disciplina (Theatrical discipline)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Teatro",
+      "leido": "Teatro",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.1397899750",
+      "pregunta": "Género (Genre)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Biodrama ficcional",
+      "leido": "Biodrama ficcional",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.2060865434",
+      "pregunta": "Rango de edad del público recomendado (Recommended audience age)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Mayores de 15 años",
+      "leido": "Mayores de 15 años",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.815342644",
+      "pregunta": "Reseña de la obra (máximo 500 carac.) (Production´s synopsis)",
+      "tipo": "parrafo",
+      "accion": "completar",
+      "esperado": "'Deseo, mantente firme' nos invita a viajar guiados por una turista intrépida y soñadora, quien nos sumerge en el universo más íntimo de Frida Kahlo. En un diálogo atemporal entre dos mujeres latinas, el arte es la trama que las sostiene y las salva mientras entretejen en escena dolores, pasiones y amores, creando un cuadro vivo y latente.",
+      "leido": "'Deseo, mantente firme' nos invita a viajar guiados por una turista intrépida y soñadora, quien nos sumerge en el universo más íntimo de Frida Kahlo. En un diálogo atemporal entre dos mujeres latinas, el arte es la trama que las sostiene y las salva mientras entretejen en escena dolores, pasiones y amores, creando un cuadro vivo y latente.",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.1315410192",
+      "pregunta": "Duración del espectáculo (Performance length)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "60 minutos",
+      "leido": "60 minutos",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.184215241",
+      "pregunta": "Dossier de la obra (historial de la obra y compañía, archivos de prensa y crítica, información adicional relevante. Archivo PDF) (Performance dossier - PDF file)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 4
+    },
+    {
+      "entry": "entry.1961142150",
+      "pregunta": "Enlace del video con la obra completa, sin cortes ni cambios de cámara, visualizable en Youtube o Vimeo. (Link to the youtube or vimeo video of the proposed production)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG",
+      "leido": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG",
+      "estado": "ok",
+      "pagina": 4
+    },
+    {
+      "entry": "entry.711371698",
+      "pregunta": "Adjuntar al presente formulario tres (3) fotografías de la obra en formato digital con una resolución mínima de 300 DPI (3 300 DPI performance photos)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 4
+    },
+    {
+      "entry": "entry.1879131417",
+      "pregunta": "Nombre de la obra (Production title)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Deseo, mantente firme",
+      "leido": "Deseo, mantente firme",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.734797885",
+      "pregunta": "Disciplina (Theatrical discipline)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Teatro",
+      "leido": "Teatro",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.1397899750",
+      "pregunta": "Género (Genre)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Biodrama ficcional",
+      "leido": "Biodrama ficcional",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.2060865434",
+      "pregunta": "Rango de edad del público recomendado (Recommended audience age)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Mayores de 15 años",
+      "leido": "Mayores de 15 años",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.815342644",
+      "pregunta": "Reseña de la obra (máximo 500 carac.) (Production´s synopsis)",
+      "tipo": "parrafo",
+      "accion": "completar",
+      "esperado": "'Deseo, mantente firme' nos invita a viajar guiados por una turista intrépida y soñadora, quien nos sumerge en el universo más íntimo de Frida Kahlo. En un diálogo atemporal entre dos mujeres latinas, el arte es la trama que las sostiene y las salva mientras entretejen en escena dolores, pasiones y amores, creando un cuadro vivo y latente.",
+      "leido": "'Deseo, mantente firme' nos invita a viajar guiados por una turista intrépida y soñadora, quien nos sumerge en el universo más íntimo de Frida Kahlo. En un diálogo atemporal entre dos mujeres latinas, el arte es la trama que las sostiene y las salva mientras entretejen en escena dolores, pasiones y amores, creando un cuadro vivo y latente.",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.1315410192",
+      "pregunta": "Duración del espectáculo (Performance length)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "60 minutos",
+      "leido": "60 minutos",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.184215241",
+      "pregunta": "Dossier de la obra (historial de la obra y compañía, archivos de prensa y crítica, información adicional relevante. Archivo PDF) (Performance dossier - PDF file)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 5
+    },
+    {
+      "entry": "entry.1961142150",
+      "pregunta": "Enlace del video con la obra completa, sin cortes ni cambios de cámara, visualizable en Youtube o Vimeo. (Link to the youtube or vimeo video of the proposed production)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG",
+      "leido": "https://youtu.be/zYiFZRzYCqg?si=UIv5kvT5lreXDLtG",
+      "estado": "ok",
+      "pagina": 5
+    },
+    {
+      "entry": "entry.711371698",
+      "pregunta": "Adjuntar al presente formulario tres (3) fotografías de la obra en formato digital con una resolución mínima de 300 DPI (3 300 DPI performance photos)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 5
+    },
+    {
+      "entry": "entry.985948242",
+      "pregunta": "Autor(a) de la obra (Author´s name)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Melisa Schneider",
+      "leido": "Melisa Schneider",
+      "estado": "ok",
+      "pagina": 6
+    },
+    {
+      "entry": "entry.187110554",
+      "pregunta": "Adjuntar los documentos que certifiquen el permiso de derechos de autor para presentar la obra. (Archivo PDF). (Professional stage licence)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 6
+    },
+    {
+      "entry": "entry.990423431",
+      "pregunta": "Director(a) de la obra (Stage director)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Malena Vieytes",
+      "leido": "Malena Vieytes",
+      "estado": "ok",
+      "pagina": 6
+    },
+    {
+      "entry": "entry.776321051",
+      "pregunta": "Ficha artística completa: elenco y equipo creativo (Full cast and creative team)",
+      "tipo": "parrafo",
+      "accion": "completar",
+      "esperado": "Dramaturgia: Melisa Schneider\nDirección: Malena Vieytes\nActuación: Melisa Schneider\nEquipo: Ezequiel Vallejo",
+      "leido": "Dramaturgia: Melisa Schneider\nDirección: Malena Vieytes\nActuación: Melisa Schneider\nEquipo: Ezequiel Vallejo",
+      "estado": "ok",
+      "pagina": 6
+    },
+    {
+      "entry": "entry.1793256391",
+      "pregunta": "Número de personas que estarían en el Festival (artistas, equipo técnico y dirección) (Number of people that would be coming to the festival)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "2",
+      "leido": "2",
+      "estado": "ok",
+      "pagina": 6
+    },
+    {
+      "entry": "entry.985948242",
+      "pregunta": "Autor(a) de la obra (Author´s name)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Melisa Schneider",
+      "leido": "Melisa Schneider",
+      "estado": "ok",
+      "pagina": 7
+    },
+    {
+      "entry": "entry.187110554",
+      "pregunta": "Adjuntar los documentos que certifiquen el permiso de derechos de autor para presentar la obra. (Archivo PDF). (Professional stage licence)",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 7
+    },
+    {
+      "entry": "entry.990423431",
+      "pregunta": "Director(a) de la obra (Stage director)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "Malena Vieytes",
+      "leido": "Malena Vieytes",
+      "estado": "ok",
+      "pagina": 7
+    },
+    {
+      "entry": "entry.776321051",
+      "pregunta": "Ficha artística completa: elenco y equipo creativo (Full cast and creative team)",
+      "tipo": "parrafo",
+      "accion": "completar",
+      "esperado": "Dramaturgia: Melisa Schneider\nDirección: Malena Vieytes\nActuación: Melisa Schneider\nEquipo: Ezequiel Vallejo",
+      "leido": "Dramaturgia: Melisa Schneider\nDirección: Malena Vieytes\nActuación: Melisa Schneider\nEquipo: Ezequiel Vallejo",
+      "estado": "ok",
+      "pagina": 7
+    },
+    {
+      "entry": "entry.1793256391",
+      "pregunta": "Número de personas que estarían en el Festival (artistas, equipo técnico y dirección) (Number of people that would be coming to the festival)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "2",
+      "leido": "2",
+      "estado": "ok",
+      "pagina": 7
+    },
+    {
+      "entry": "entry.1778788252",
+      "pregunta": "Ficha técnica (planta escenografía, plano de iluminación y requerimientos técnicos. Archivo PDF) (Technical rider (Set design, props and lighting requirements))",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 8
+    },
+    {
+      "entry": "entry.1581684456",
+      "pregunta": "Tiempo de montaje (Set up time)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "2 horas",
+      "leido": "2 horas",
+      "estado": "ok",
+      "pagina": 8
+    },
+    {
+      "entry": "entry.1315553276",
+      "pregunta": "Tiempo de desmontaje (Strike time)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "1 hora",
+      "leido": "1 hora",
+      "estado": "ok",
+      "pagina": 8
+    },
+    {
+      "entry": "entry.1778788252",
+      "pregunta": "Ficha técnica (planta escenografía, plano de iluminación y requerimientos técnicos. Archivo PDF) (Technical rider (Set design, props and lighting requirements))",
+      "tipo": "archivo",
+      "accion": "archivo_manual",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 9
+    },
+    {
+      "entry": "entry.1581684456",
+      "pregunta": "Tiempo de montaje (Set up time)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "2 horas",
+      "leido": "2 horas",
+      "estado": "ok",
+      "pagina": 9
+    },
+    {
+      "entry": "entry.1315553276",
+      "pregunta": "Tiempo de desmontaje (Strike time)",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "1 hora",
+      "leido": "1 hora",
+      "estado": "ok",
+      "pagina": 9
+    }
+  ],
+  "registro": [
+    {
+      "ms": 1878,
+      "evento": "formulario abierto"
+    },
+    {
+      "ms": 16595,
+      "evento": "respuestas propuestas por la IA (1 llamada, 14.6 s, USD 0.0095)"
+    },
+    {
+      "ms": 16665,
+      "evento": "página 1: PRUEBA StageFlow — Clon FITCRUZ 2027 / Bases de la convocatoria (Call guidelines) — 1 preguntas"
+    },
+    {
+      "ms": 16902,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 74428,
+      "evento": "la persona cambió de página durante la pausa: sigo con la página que está a la vista"
+    },
+    {
+      "ms": 74480,
+      "evento": "página 2: PRUEBA StageFlow — Clon FITCRUZ 2027 / Datos generales (General information) — 5 preguntas"
+    },
+    {
+      "ms": 74813,
+      "evento": "clic en \"Siguiente\""
+    },
+    {
+      "ms": 76040,
+      "evento": "página 3: PRUEBA StageFlow — Clon FITCRUZ 2027 / Datos de la obra (Production details) — 9 preguntas"
+    },
+    {
+      "ms": 76346,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 91483,
+      "evento": "la persona cambió de página durante la pausa: sigo con la página que está a la vista"
+    },
+    {
+      "ms": 91494,
+      "evento": "página 4: PRUEBA StageFlow — Clon FITCRUZ 2027 / Datos de la obra (Production details) / Insertar un archivo — 9 preguntas"
+    },
+    {
+      "ms": 91715,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 115982,
+      "evento": "la persona cambió de página durante la pausa: sigo con la página que está a la vista"
+    },
+    {
+      "ms": 116009,
+      "evento": "página 5: PRUEBA StageFlow — Clon FITCRUZ 2027 / Datos de la obra (Production details) / Insertar un archivo / Insertar un archivo — 9 preguntas"
+    },
+    {
+      "ms": 116240,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 189010,
+      "evento": "listo lo de la persona, sigo"
+    },
+    {
+      "ms": 189249,
+      "evento": "clic en \"Siguiente\""
+    },
+    {
+      "ms": 190897,
+      "evento": "página 6: PRUEBA StageFlow — Clon FITCRUZ 2027 / Ficha artística (Artistic details) — 5 preguntas"
+    },
+    {
+      "ms": 191191,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 300117,
+      "evento": "la persona cambió de página durante la pausa: sigo con la página que está a la vista"
+    },
+    {
+      "ms": 300127,
+      "evento": "página 7: PRUEBA StageFlow — Clon FITCRUZ 2027 / Ficha artística (Artistic details) / Insertar un archivo — 5 preguntas"
+    },
+    {
+      "ms": 300343,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 333607,
+      "evento": "listo lo de la persona, sigo"
+    },
+    {
+      "ms": 333856,
+      "evento": "clic en \"Siguiente\""
+    },
+    {
+      "ms": 336091,
+      "evento": "página 8: PRUEBA StageFlow — Clon FITCRUZ 2027 / Ficha técnica (Technical information) — 3 preguntas"
+    },
+    {
+      "ms": 336310,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 342349,
+      "evento": "la persona cambió de página durante la pausa: sigo con la página que está a la vista"
+    },
+    {
+      "ms": 342359,
+      "evento": "página 9: PRUEBA StageFlow — Clon FITCRUZ 2027 / Ficha técnica (Technical information) / Insertar un archivo — 3 preguntas"
+    },
+    {
+      "ms": 342560,
+      "evento": "PAUSA — falta que hagas esto en la ventana del navegador:"
+    },
+    {
+      "ms": 366782,
+      "evento": "listo lo de la persona, sigo"
+    },
+    {
+      "ms": 366968,
+      "evento": "última página: \"Enviar\" visible. No se aprieta."
+    }
+  ]
+}

@@ -162,7 +162,10 @@ function hayBoton(doc: Document, nombres: RegExp): boolean {
 
 export function leerSeccion(doc: Document = document): LecturaSeccion {
   const items = itemsVisibles(doc)
-  const encabezados = [...doc.querySelectorAll('[role="heading"]')]
+  // Solo títulos del formulario: el selector de archivos de Google abre un [role=dialog] fuera del <form>
+  // con su propio título ("Insertar un archivo"), que no es un cambio de sección.
+  const raiz = doc.querySelector('form') ?? doc
+  const encabezados = [...raiz.querySelectorAll('[role="heading"]')].filter((h) => !h.closest('[role="dialog"]'))
   const enLista = (h: Element) => h.closest('[role="listitem"]') && datosDe(h.closest('[role="listitem"]')!)
   const secciones = encabezados.filter((h) => !enLista(h)).map((h) => espacios(h.textContent ?? '')).filter(Boolean)
   const titulo = secciones.join(' / ')
