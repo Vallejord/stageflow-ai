@@ -10,7 +10,7 @@
     "leer-form": "node tools/leer-form.ts",
     "capturar-seccion": "node tools/capturar-seccion.ts",
     "proponer": "node --env-file-if-exists=.env.local tools/proponer.ts",
-    "test": "node --test tests/estructura.test.ts tests/respuestas.test.ts"
+    "test": "node --test tests/estructura.test.ts tests/respuestas.test.ts tests/completar.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
