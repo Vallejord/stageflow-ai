@@ -23,8 +23,6 @@ export interface Dependencias {
   tokenEsperado: string | undefined
   ficha: unknown
   proponer: (estructura: EstructuraForm, ficha: unknown) => Promise<ResultadoPropuesta>
-  /** Solo en desarrollo: fuerza una falla de la IA sin llamarla (para probar los mensajes de error). */
-  simularFallaIA?: string
 }
 
 /** Errores en castellano simple: el panel los muestra tal cual. */
@@ -66,7 +64,6 @@ export async function atenderRespuestas(pedido: Pedido, deps: Dependencias): Pro
   if (!esEstructura(estructura)) return error(400, 'pedido_invalido', 'No se recibió el formulario a completar.')
 
   try {
-    if (deps.simularFallaIA) throw new ErrorIA(deps.simularFallaIA as ErrorIA['motivo'], 'Falla simulada (STAGEFLOW_SIMULAR_FALLA_IA)')
     llamadasDesdeQueArranco++
     console.log(`[api/respuestas] llamada a la IA nº ${llamadasDesdeQueArranco} desde que arrancó el servidor: "${estructura.titulo}"`)
     const r = await deps.proponer(estructura, deps.ficha)

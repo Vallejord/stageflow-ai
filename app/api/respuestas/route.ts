@@ -20,7 +20,6 @@ export async function POST(req: Request) {
       tokenEsperado: process.env.STAGEFLOW_DEV_TOKEN,
       ficha: JSON.parse(readFileSync(path.join(process.cwd(), 'data', 'obra-demo.json'), 'utf8')),
       proponer: proponerRespuestas,
-      simularFallaIA: process.env.NODE_ENV !== 'production' ? process.env.STAGEFLOW_SIMULAR_FALLA_IA : undefined,
     },
   )
   return Response.json(r.cuerpo, { status: r.estado, headers: encabezadosCors(origen) })

@@ -78,11 +78,12 @@ test('Fallas de la IA: mensaje claro, sin respuesta a medias', async () => {
   assert.equal(motivo(await atenderRespuestas(pedido(TOKEN), d)), 'respuesta_incompleta')
 })
 
-test('Falla simulada (solo desarrollo): no llama a la IA', async () => {
-  const { d, llamadas } = deps({ simularFallaIA: 'sin_cupo' })
+test('IA sin cupo: mensaje claro y estado 503 (la falla se simula en la prueba, no en el servidor)', async () => {
+  const { d } = deps({ proponer: async () => { throw new ErrorIA('sin_cupo', 'cupo agotado') } })
   const r = await atenderRespuestas(pedido(TOKEN), d)
+  assert.equal(r.estado, 503)
   assert.equal(motivo(r), 'ia_sin_cupo')
-  assert.equal(llamadas.length, 0)
+  assert.equal((r.cuerpo as any).respuestas, undefined)
 })
 
 test('CORS: solo para la extensión', () => {
