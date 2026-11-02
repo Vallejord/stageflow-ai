@@ -10,7 +10,7 @@ import { compararRespuestas, tablaRespuestas } from './comparar-respuestas.ts'
 const leer = (ruta: string) => JSON.parse(readFileSync(new URL(`../${ruta}`, import.meta.url), 'utf8'))
 const formA: EstructuraForm = leer('fixtures/form-a.estructura.json')
 const formB: EstructuraForm = leer('fixtures/form-b.estructura.json')
-const ficha = leer('data/obra-demo.json')
+const ficha = leer('tests/ficha-t2.json') // la ficha con la que se escribió lo esperado de la T2 (congelada)
 const esperadas = leer('tests/respuestas-esperadas-form-a.json').respuestas
 
 /** Respuesta "perfecta" de una IA simulada, armada desde lo esperado. */
