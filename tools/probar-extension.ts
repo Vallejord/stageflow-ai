@@ -132,6 +132,63 @@ async function panelB() {
   }
 }
 
+/**
+ * Criterio 3: 1 llamada a la IA por formulario aunque se recargue la página, se cierre el panel o se cambie de sección.
+ * Cuenta las llamadas en el registro del servidor (SF_LOG_SERVIDOR = archivo con la salida de npm run dev).
+ */
+async function unaLlamadaB() {
+  const log = process.env.SF_LOG_SERVIDOR
+  if (!log) throw new Error('Falta SF_LOG_SERVIDOR (archivo con la salida de npm run dev)')
+  const llamadas = () => (readFileSync(log, 'utf8').match(/\[api\/respuestas\] llamada a la IA/g) ?? []).length
+  const antes = llamadas()
+  const { context, idExtension } = await abrirConExtension()
+  try {
+    const form = await context.newPage()
+    await form.goto(FORM_B, { waitUntil: 'load' })
+    const ayudante = await context.newPage()
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    const tabId = await pestanaDelFormulario(ayudante)
+    await ayudante.close()
+    const panel = await context.newPage()
+    const urlPanel = `chrome-extension://${idExtension}/sidepanel.html?tab=${tabId}`
+    const paso = (texto: string) => console.log(`${texto} — llamadas a la IA hasta ahora: ${llamadas() - antes}`)
+
+    await panel.goto(urlPanel)
+    await form.bringToFront()
+    await panel.getByText('Completar esta página').waitFor({ timeout: 30_000 })
+    paso('1. Panel abierto, respuestas visibles')
+
+    await form.reload({ waitUntil: 'load' })
+    await panel.waitForTimeout(3000)
+    await panel.getByText('Completar esta página').waitFor({ timeout: 10_000 })
+    paso('2. La persona recargó el formulario (F5)')
+
+    await panel.reload()
+    await form.bringToFront()
+    await panel.getByText('Respuestas guardadas de antes').waitFor({ timeout: 10_000 })
+    paso('3. Se cerró y se volvió a abrir el panel ("Respuestas guardadas de antes")')
+
+    await form.waitForFunction(() => !document.querySelector('[role="listitem"] input[disabled], [role="listbox"][aria-disabled="true"]'), null, { timeout: 10_000 }).catch(() => {})
+    await panel.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent === 'Completar esta página')!.click())
+    await panel.waitForFunction(() => /quedaron bien|hay que mirarlas/.test(document.body.innerText), null, { timeout: 30_000 })
+    await personaApretaSiguiente(form)
+    await panel.getByText('Fechas y valoración').waitFor({ timeout: 15_000 })
+    paso('4. Completó la página 1 y la persona pasó a la página 2')
+
+    await panel.reload()
+    await form.bringToFront()
+    await panel.getByText('Respuestas guardadas de antes').waitFor({ timeout: 10_000 })
+    paso('5. Se volvió a abrir el panel en la página 2')
+
+    const total = llamadas() - antes
+    console.log(`\nTotal: ${total} llamada(s) a la IA para el Formulario B → ${total === 1 ? 'OK (criterio 3)' : 'FALLA'}`)
+    if (total !== 1) process.exitCode = 1
+  } finally {
+    await context.close()
+  }
+}
+
 if (escenario === 'contenido-b') await contenidoB()
+else if (escenario === 'una-llamada-b') await unaLlamadaB()
 else if (escenario === 'panel-b') await panelB()
 else if (escenario) throw new Error(`Escenario desconocido: ${escenario}`)

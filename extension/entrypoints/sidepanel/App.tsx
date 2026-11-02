@@ -101,6 +101,12 @@ export function App() {
     return () => clearInterval(t)
   }, [revisar])
 
+  // Página nueva: el panel vuelve arriba (para que se vean el título y, si es la última, el cartel de "Enviar").
+  const firma = estado?.seccion.firma
+  useEffect(() => {
+    window.scrollTo(0, 0) // sin devolver nada: React tomaría lo que devuelve como función de limpieza
+  }, [firma])
+
   // Pedir las respuestas una sola vez por formulario (después quedan guardadas).
   const pedirRespuestas = useCallback(async () => {
     if (!estado?.formId || !estado.estructura.ok) return

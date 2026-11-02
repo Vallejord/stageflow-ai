@@ -1,0 +1,12 @@
+Salida de: node tools/probar-extension.ts una-llamada-b (02/11/2026), contando en el registro del servidor (npm run dev)
+
+1. Panel abierto, respuestas visibles — llamadas a la IA hasta ahora: 1
+2. La persona recargó el formulario (F5) — llamadas a la IA hasta ahora: 1
+3. Se cerró y se volvió a abrir el panel ("Respuestas guardadas de antes") — llamadas a la IA hasta ahora: 1
+4. Completó la página 1 y la persona pasó a la página 2 — llamadas a la IA hasta ahora: 1
+5. Se volvió a abrir el panel en la página 2 — llamadas a la IA hasta ahora: 1
+
+Total: 1 llamada(s) a la IA para el Formulario B → OK (criterio 3)
+
+En el Chrome de Ezequiel (misma sesión del servidor): abrir el panel en el B, completar la página 1 y pasar
+a la página 2 → una sola llamada (nº 1 en el registro del servidor).
