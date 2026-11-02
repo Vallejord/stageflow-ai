@@ -178,3 +178,28 @@ Revisado de forma independiente:
 **Fuera de esta tarea:** extensión, interfaz, Firebase, Drive, Microsoft Forms.
 
 **Con esto se cierra el paso 1 (Motor)** del plan.
+
+### Cierre (02/11/2026) — Claude Code
+Código: `lib/motor/google-forms/completar.ts` (completado, solo DOM), `tools/completar.ts` (recorrido, `npm run completar`), `tools/inyectar-completar.ts` (carga el módulo en la página quitándole los tipos con `node:module`, sin dependencias nuevas), `tools/capturar-seccion.ts`, `tests/completar.test.ts`, `tests/respuestas-prueba-form-b.json`. Commits `20848e7` a `24bb253` y el de este cierre.
+
+| Criterio | Resultado | Evidencia |
+|---|---|---|
+| 1. A, primera corrida | ✅ con borrador vacío (Borrar formulario, hecho por Ezequiel): pausas solo en la bases (pág. 1) y los 4 archivos (págs. 3, 4, 5); llega a la pág. 5 con "Enviar" visible. En las págs. 3, 4 y 5 siguió sola tras cada archivo. En la pág. 1 la página cambió durante la pausa (la persona apretó "Siguiente"); que sigue sola tras la bases quedó probado en el primer intento (`form-a-1`) | `fixtures/t3/form-a-corrida1.informe.md`, `form-a-corrida1-final.png` |
+| 2. A, segunda corrida sin pausas | ❌ **no se cumple: el borrador de Google no conserva los archivos subidos.** Sí conserva la bases y los textos (retomó directo en "Datos generales"). Hubo 3 pausas (los 4 archivos); tras subirlos, verificó de nuevo todos los campos: 18/18 ok | `fixtures/t3/form-a-corrida2.informe.md`, `form-a-corrida2-final.png` |
+| 3. Todo `ok` | ✅ corrida 1: todos ok; corrida 2: 18/18 ok. Cero `distinto` / `no_encontrado` | informes de las dos corridas |
+| 4. Formulario B | ✅ 8/8 ok (casillas, desplegable, respuesta corta, fecha, hora, escala, cuadrícula de opción y de casillas), llega a "Enviar", 0 llamadas a la IA, 5 s | `fixtures/t3/form-b.informe.md`, `form-b-final.png` |
+| 5. Bloqueo | ✅ con la pregunta obligatoria de casillas vacía a propósito, informa en **0,8 s**: "¿En qué disciplinas trabaja la compañía?" — Esta pregunta es obligatoria. (Con "Fecha de estreno" no sirve: está en la última página, sin "Siguiente") | `fixtures/t3/form-b-bloqueo.informe.md` |
+| 6. Nunca "Enviar" ni "Borrar" | ✅ único clic sobre botones: `clicSiguiente()` (`tools/completar.ts`), que lanza error si el texto no es "Siguiente"/"Next". Registro: solo clics en "Siguiente" | código + "Clics en botones" de cada informe |
+| 7. ≤ 1 llamada, < 90 s | ✅ 1 llamada por corrida; sin contar la espera de la persona: 25,1 s (corrida 1) y 20,1 s (corrida 2) | informes |
+| 8. Módulo sin Node/Playwright, con pruebas sobre HTML real | ✅ solo `import type`; 10 pruebas en Chromium de Playwright, sin red, sobre HTML guardado de secciones reales de A y B (vacías, completadas, con borrador, con archivo subido, con el selector de archivos abierto) | `tests/completar.test.ts`, `fixtures/html/` |
+| 9. `npm test` | ✅ 26/26 (6 de T1, 8 de T2, 12 de T3); `npm test` ya no reescribe archivos commiteados (comparaciones a `salidas/`, ignorada) | salida de `npm test` |
+| 10. Agente viejo | ✅ `app/api/agent/run/route.ts` sin cambios desde `ebd7a5e` | `git diff` |
+
+**IA:** 4 llamadas en toda la tarea (primer intento, una corrida cortada por error, corrida 1 y corrida 2), ≈ USD 0,0375. El B y el bloqueo no usan IA.
+
+**Hallazgos (para mission control):**
+1. **El borrador de Google no conserva los archivos subidos** entre sesiones (sí la bases y los textos). Es lo que impide el criterio 2. Para la extensión: si la persona cierra y vuelve, tiene que subir los archivos de nuevo. Decidir si se reformula el criterio o si se acepta así.
+2. **Desplegable con un valor previo del borrador:** los eventos disparados desde la página no lo cambian (la lista figura abierta pero las opciones no se dibujan). Con un clic real de Playwright sí funciona. Afecta a la extensión (no puede generar clics reales). Hoy: el módulo lo informa como `distinto` y el recorrido le pide a la persona que lo elija. El A no tiene desplegables. Decidir si se investiga más adelante.
+3. DOM de Google Forms aprendido (documentado en `completar.ts`): el desplegable responde a mousedown + mouseup, no a click(); las cuadrículas se dibujan dos veces (la copia deshabilitada no tiene `data-field-index`); un archivo subido se marca con `[data-id][data-mime-type]` dentro de la pregunta y un input hidden `entry.N` **fuera** de la pregunta; el selector de archivos abre un `[role=dialog]` fuera del `<form>` con su propio título; los campos llegan deshabilitados hasta que corre el JS de Google; la página exige Trusted Types (`addScriptTag` no funciona; se inyecta con `addInitScript`).
+4. La prueba de la T2 "IA simulada correcta" leía la ficha viva; ahora usa `tests/ficha-t2.json` (la ficha con la que se escribió lo esperado). Lo esperado de la T2 no se tocó.
+5. Durante la tarea se corrigieron: ventana con tamaño fijo (la persona no podía scrollear), detección de archivos, pausa que se caía si la página se recargaba, y el selector de archivos que contaba como cambio de página. Los informes de la corrida 1 tienen filas repetidas por ese último error (ya corregido; la corrida 2 sale limpia).
