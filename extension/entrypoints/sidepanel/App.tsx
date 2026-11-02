@@ -1,7 +1,7 @@
 // Panel lateral de StageFlow (T4). Pregunta a la página cada 1,5 s cómo está y completa cuando la persona lo pide.
 // Nunca aprieta botones del formulario: "Siguiente" y "Enviar" los aprieta la persona.
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Pendiente, ResultadoCampo } from '../../../lib/motor/google-forms/completar.ts'
+import { esConfirmacionHumana, type Pendiente, type ResultadoCampo } from '../../../lib/motor/google-forms/completar.ts'
 import type { Propuesta } from '../../../lib/motor/google-forms/respuestas.ts'
 import type { EstadoPagina, Pedido, RespuestaContenido } from '../../lib/mensajes.ts'
 import { respuestasDelFormulario, type Guardadas } from '../../lib/servidor.ts'
@@ -36,6 +36,15 @@ function textoRespuesta(p: Propuesta): string {
 
 const entryDe = (p: Propuesta) => p.entry ?? p.filas?.[0]?.entry ?? null
 
+/** La nota de la IA puede nombrar campos internos de la ficha ("tecnica_y_links.link_carpeta_drive"): no se muestran. */
+const sinCamposInternos = (nota: string) =>
+  nota
+    .replace(/\s*\(\s*[a-z_]+(?:\.[a-z_]+)+\s*\)/g, '') // "(tecnica_y_links.link_carpeta_drive)"
+    .replace(/\b[a-z_]+_[a-z_]*\.[a-z_]+\b/g, '') // el mismo nombre sin paréntesis
+    .replace(/\s+([.,;:])/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+
 interface Tarea {
   clave: string
   texto: string
@@ -46,10 +55,11 @@ function tareasDe(pendientes: Pendiente[], propuestas: Propuesta[], resultados: 
   const corto = (s: string) => (s.length > 80 ? s.slice(0, 77) + '…' : s)
   const tareas: Tarea[] = pendientes.map((p) => {
     const nota = propuestas.find((x) => x.entry === p.entry)?.nota
+    const sugerido = nota ? sinCamposInternos(nota) : ''
     return {
       clave: p.entry,
       hecho: p.hecho,
-      texto: p.tipo === 'confirmacion' ? `Leé las bases y respondé vos: «${corto(p.pregunta)}»` : `Subí el archivo en «${corto(p.pregunta)}»${nota ? `. Sugerido: ${nota}` : ''}`,
+      texto: p.tipo === 'confirmacion' ? `Leé las bases y respondé vos: «${corto(p.pregunta)}»` : `Subí el archivo en «${corto(p.pregunta)}»${sugerido ? `. Sugerido: ${sugerido}` : ''}`,
     }
   })
   // Desplegables que no se dejaron cambiar: los elige la persona.
@@ -213,12 +223,13 @@ export function App() {
           <ul className="preguntas">
             {enPagina.map((p) => {
               const r = resultadoDe(p)
+              const laRespondeLaPersona = esConfirmacionHumana(p.pregunta) // bases, términos, declaraciones
               return (
                 <li key={entryDe(p)}>
                   <p className="pregunta">{p.pregunta}</p>
-                  {p.origen !== 'archivo_manual' && <p className="respuesta">{textoRespuesta(p)}</p>}
+                  {p.origen !== 'archivo_manual' && !laRespondeLaPersona && <p className="respuesta">{textoRespuesta(p)}</p>}
                   <p className="origen">
-                    {ORIGEN[p.origen]}
+                    {laRespondeLaPersona ? 'La respondés vos' : ORIGEN[p.origen]}
                     {r?.estado === 'ok' && <span className="ok"> · Quedó bien</span>}
                     {r?.estado && r.estado !== 'ok' && <span className="error"> · Miralo: quedó distinto</span>}
                   </p>

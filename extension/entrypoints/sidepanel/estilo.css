@@ -15,7 +15,7 @@ div.error { background: #fdecea; border-radius: 8px; padding: 8px 10px; font-siz
 .final { background: #e7f6ec; border: 1px solid #a6dbb6; border-radius: 8px; padding: 8px 10px; font-weight: 600; }
 .tareas { background: #fff; border: 2px solid #4b2fd1; border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
 .tareas ul { margin: 0; padding-left: 0; list-style: none; }
-.tareas li { margin: 6px 0; }
+.tareas li { margin: 6px 0; font-size: 14px; }
 .tareas li.hecho { text-decoration: line-through; color: #6b8f76; }
 button { font: inherit; border-radius: 8px; border: 1px solid #c9c4dc; background: #fff; padding: 6px 12px; cursor: pointer; }
 button.principal { width: 100%; background: #4b2fd1; color: #fff; border: none; padding: 10px; font-size: 15px; font-weight: 600; margin: 8px 0; }

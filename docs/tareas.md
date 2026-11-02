@@ -7,7 +7,7 @@ Tablero de tareas que mission control (chat general) asigna al **chat desarrollo
 | T1 | 1. Motor | Lector de estructura de Google Forms | **Cerrada y aprobada (30/10/2026)** — ver "Cierre" y "Verificación" abajo |
 | T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | **Cerrada y aprobada (31/10/2026)** |
 | T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** — criterio 2 reformulado |
-| T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | Asignada (02/11/2026) |
+| T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | **Cerrada por Claude Code (02/11/2026)**, pendiente de verificación de mission control |
 
 ---
 
@@ -257,3 +257,28 @@ Revisado de forma independiente:
 **Evidencia para cerrar:** capturas del panel en cada momento (respuestas, completado, tareas de la persona, última página, un error), resultado de la búsqueda de la clave en la extensión compilada, salida de `npm test` y de la compilación, informe del desplegable, commits. Actualizar el estado en la tabla y el "Cierre" en `docs/tareas.md`.
 
 **Fuera de esta tarea:** Firebase, cuentas, Drive, publicar en la Chrome Web Store, Microsoft Forms, que la extensión apriete "Siguiente".
+
+### Cierre (02/11/2026) — Claude Code
+Código: `extension/` (WXT + React + TypeScript, MV3: `entrypoints/content.ts`, `entrypoints/sidepanel/`, `lib/`), `app/api/respuestas/route.ts` + `lib/servidor/respuestas.ts`, `tests/api-respuestas.test.ts`, `tools/probar-extension.ts`, `tools/investigar-desplegable.ts`. Commits `4a25d6d` a `87809c7` y el de este cierre. La extensión se carga desde `extension/.output/chrome-mv3` (`cd extension && npm install && npm run build`); el servidor con `npm run dev`.
+
+| Criterio | Resultado | Evidencia |
+|---|---|---|
+| 1. A en el Chrome de Ezequiel | ✅ 5 páginas; 18/18 campos de texto y opción "quedaron bien" (5 + 7 + 4 + 2); tareas de la persona (bases y 4 archivos) aparecen y se tachan solas al hacerlas; última página con el cartel "Revisá todo y apretá «Enviar» vos", sin apretar "Enviar" | `fixtures/t4/capturas/chrome-a-*.png` |
+| 2. B, todos los tipos | ✅ 8/8 ok desde el panel (casillas, desplegable, respuesta corta, fecha, hora, escala, cuadrícula de opción y de casillas), con las respuestas de prueba cargadas en la memoria de la extensión. En el Chrome de Ezequiel, con la ficha de demo: 2/2 ok (casillas y desplegable). El desplegable con borrador ya no es un caso aparte (ver hallazgo 1) | `fixtures/t4/verificaciones.md`, `capturas/b-todos-los-tipos-*.png`, `capturas/chrome-b-*.png` |
+| 3. 1 llamada por formulario | ✅ B: recargar, cerrar y reabrir el panel, pasar de página → 1 llamada (contada en el registro del servidor). A en el Chrome de Ezequiel: 1 llamada en toda la corrida | `fixtures/t4/una-llamada-b.txt` |
+| 4. < 20 s hasta ver las respuestas | ✅ B: 6,5 s; A: 12,8 s (Chrome de Ezequiel) | `capturas/chrome-b-1-respuestas.png`, `chrome-a-1-bases.png` |
+| 5. Clave fuera de la extensión | ✅ 0 apariciones de la clave completa, de un tramo de 20 caracteres, de patrones de clave de Google y del texto `GEMINI_API_KEY` en `extension/.output/chrome-mv3` | `fixtures/t4/verificaciones.md` |
+| 6. Nunca "Enviar" ni "Borrar" | ✅ la extensión no hace clic en botones del formulario; los únicos eventos son del motor, dentro de las preguntas. Con el panel cerrado no toca nada (probado en el Chrome de Ezequiel) | `fixtures/t4/verificaciones.md` |
+| 7. Errores entendibles | ✅ no es un formulario / falta iniciar sesión (un mensaje para los dos; ver hallazgo 2), servidor apagado, IA sin cupo, IA con falla; "Probar de nuevo" probado | `fixtures/t4/errores.md`, `capturas/error-*.png` |
+| 8. `npm test` y compilación | ✅ `npm test` 32/32; extensión: `tsc` y `wxt build` sin errores | `fixtures/t4/verificaciones.md` |
+| 9. Informe del desplegable | ✅ | `docs/investigacion-desplegable.md` |
+
+**IA en la tarea:** ~15 llamadas, ≈ USD 0,05 (estimado: el contador del servidor se reinicia con cada arranque). Incluye 4 llamadas desperdiciadas por errores de las pruebas, ya corregidos.
+
+**Hallazgos y decisiones para mission control:**
+1. **El desplegable con borrador sí se puede cambiar.** Lo de la T3 era un error del motor (la opción se buscaba antes de abrir la lista y Google la vuelve a dibujar), corregido en `4b4e892`. Probado con un borrador real de Google y desde la extensión. Hay que corregir el aprendizaje en `CLAUDE.md` ("Lo aprendido") y en `docs/plan-mvp.md` ("Límites conocidos"). La tarea de la persona para un desplegable `distinto` queda como red de seguridad.
+2. **"Falta iniciar sesión" comparte mensaje con "no es un formulario":** sin sesión, Google manda la pestaña a `accounts.google.com`, donde la extensión no tiene acceso. Distinguirlo exigiría pedir acceso a la página de inicio de sesión de Google; no se hizo. Decidir si queda así.
+3. El token de desarrollo va dentro de la extensión compilada (es lo previsto hasta las cuentas del paso 3). La clave de Gemini, no.
+4. `next dev` se corta una vez por arranque mostrando un aviso que pide correr `next upgrade --agent=security`; no se ejecutó (fuera de la tarea). Al relanzarlo sigue funcionando. Conviene revisar las actualizaciones de seguridad de Next aparte.
+5. Después de la corrida del A se hicieron tres retoques del panel, sin volver a probarlos en el Chrome de Ezequiel (sí compilación y el B automático): la tarjeta de la bases dice "La respondés vos", lo sugerido no muestra nombres internos de la ficha (como `tecnica_y_links.link_carpeta_drive`) y el texto de las tareas es más grande.
+6. Para las pruebas: en una pestaña oculta Chrome frena las animaciones y el desplegable de Google no se abre; con el panel lateral real el formulario está siempre a la vista.
