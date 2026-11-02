@@ -61,7 +61,7 @@ async function contenidoB() {
     const form = await context.newPage()
     await form.goto(FORM_B, { waitUntil: 'load' })
     const extension = await context.newPage()
-    await extension.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    await extension.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=-1`) // ayudante: ?tab=-1 para que el panel no pida respuestas
     const tabId = await pestanaDelFormulario(extension)
     // Como con el panel lateral real, el formulario tiene que estar a la vista: en una pestaña oculta Chrome
     // frena las animaciones y el desplegable de Google no llega a abrirse.
@@ -97,7 +97,7 @@ async function panelB() {
     const form = await context.newPage()
     await form.goto(FORM_B, { waitUntil: 'load' })
     const ayudante = await context.newPage()
-    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=-1`) // ayudante: ?tab=-1 para que el panel no pida respuestas
     const tabId = await pestanaDelFormulario(ayudante)
     await ayudante.close()
     const panel = await context.newPage()
@@ -146,7 +146,7 @@ async function unaLlamadaB() {
     const form = await context.newPage()
     await form.goto(FORM_B, { waitUntil: 'load' })
     const ayudante = await context.newPage()
-    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=-1`) // ayudante: ?tab=-1 para que el panel no pida respuestas
     const tabId = await pestanaDelFormulario(ayudante)
     await ayudante.close()
     const panel = await context.newPage()
@@ -197,7 +197,7 @@ async function panelEn(url: string, nombre: string, segundos = 12) {
     const pagina = await context.newPage()
     await pagina.goto(url, { waitUntil: 'load' }).catch(() => {})
     const ayudante = await context.newPage()
-    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=-1`) // ayudante: ?tab=-1 para que el panel no pida respuestas
     await pagina.bringToFront()
     const [tabId] = await ayudante.evaluate(async () => (await chrome.tabs.query({ active: true })).map((t) => t.id!))
     await ayudante.close()
