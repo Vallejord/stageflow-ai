@@ -3,7 +3,7 @@
 // "Siguiente" lo aprieta ESTE script haciendo de persona: la extensión nunca lo aprieta.
 // Uso: node tools/probar-extension.ts contenido-b
 import { chromium, type BrowserContext, type Page } from 'playwright'
-import { mkdtempSync, readFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 
@@ -88,5 +88,50 @@ async function contenidoB() {
   }
 }
 
+/** Panel real (como pestaña, con ?tab=) sobre el Formulario B: respuestas, completar, página nueva y última página. */
+async function panelB() {
+  const DIR = path.join('fixtures', 't4', 'capturas')
+  mkdirSync(DIR, { recursive: true })
+  const { context, idExtension } = await abrirConExtension()
+  try {
+    const form = await context.newPage()
+    await form.goto(FORM_B, { waitUntil: 'load' })
+    const ayudante = await context.newPage()
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    const tabId = await pestanaDelFormulario(ayudante)
+    await ayudante.close()
+    const panel = await context.newPage()
+    await panel.setViewportSize({ width: 400, height: 1000 })
+    const t0 = performance.now()
+    await panel.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=${tabId}`)
+    await form.bringToFront() // el formulario a la vista, como con el panel lateral real
+    const foto = async (nombre: string) => {
+      await panel.screenshot({ path: path.join(DIR, `${nombre}.png`), fullPage: true })
+      await form.bringToFront()
+    }
+    await panel.getByText('Completar esta página').waitFor({ timeout: 30_000 })
+    console.log(`Respuestas visibles en el panel a los ${((performance.now() - t0) / 1000).toFixed(1)} s`)
+    await foto('b-1-respuestas')
+
+    for (let pagina = 1; ; pagina++) {
+      await form.waitForFunction(() => !document.querySelector('[role="listitem"] input[disabled], [role="listbox"][aria-disabled="true"]'), null, { timeout: 10_000 }).catch(() => {})
+      // Clic en el botón del panel sin traer el panel al frente (el formulario sigue a la vista).
+      await panel.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent === 'Completar esta página')!.click())
+      await panel.waitForFunction(() => /quedaron bien|hay que mirarlas|nada para completar/.test(document.body.innerText), null, { timeout: 30_000 })
+      console.log(`Página ${pagina}: ${(await panel.locator("p.ok, p.error, p.nota").last().innerText()).trim()}`)
+      await foto(`b-${pagina + 1}-completada`)
+      const s = await pedir(panel, tabId, { tipo: 'leer' })
+      if (!s.estado.seccion.haySiguiente) break
+      await personaApretaSiguiente(form)
+      await panel.waitForFunction((t) => !document.body.innerText.includes(t), (await panel.locator('h2').innerText()), { timeout: 15_000 })
+      console.log(`   la persona apretó "Siguiente"; el panel muestra: ${await panel.locator('h2').innerText()}`)
+    }
+    console.log(`Última página en el panel: ${await panel.locator('p.final').innerText().catch(() => '(no aparece)')}`)
+  } finally {
+    await context.close()
+  }
+}
+
 if (escenario === 'contenido-b') await contenidoB()
+else if (escenario === 'panel-b') await panelB()
 else if (escenario) throw new Error(`Escenario desconocido: ${escenario}`)
