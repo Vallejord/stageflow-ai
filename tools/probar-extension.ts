@@ -214,7 +214,50 @@ async function panelEn(url: string, nombre: string, segundos = 12) {
   }
 }
 
+/**
+ * Criterio 2: todos los tipos del Formulario B desde el panel. Como la ficha de demo no tiene esos datos, se cargan
+ * las respuestas de prueba (tests/respuestas-prueba-form-b.json) en la memoria de la extensión, donde quedan las
+ * respuestas guardadas: el panel completa por el camino normal y no llama a la IA.
+ */
+async function todosLosTiposB() {
+  const { context, idExtension } = await abrirConExtension()
+  try {
+    const prueba = JSON.parse(readFileSync('tests/respuestas-prueba-form-b.json', 'utf8'))
+    const ayudante = await context.newPage()
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=-1`)
+    await ayudante.evaluate(
+      (g) => chrome.storage.local.set({ 'respuestas:1FAIpQLSdB-Spfi_-8eemcSWvTf_1lakNyaaDpQuhY7V5EkIOWay6S0Q': g }),
+      { propuestas: prueba.respuestas, llamadasIA: 0, costoUSD: 0, msIA: 0, fecha: new Date().toISOString() },
+    )
+    const form = await context.newPage()
+    await form.goto(FORM_B, { waitUntil: 'load' })
+    const tabId = await pestanaDelFormulario(ayudante)
+    const panel = await context.newPage()
+    await panel.setViewportSize({ width: 400, height: 1100 })
+    await panel.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=${tabId}`)
+    await form.bringToFront()
+    await panel.getByText('Respuestas guardadas de antes').waitFor({ timeout: 15_000 })
+    for (let pagina = 1; ; pagina++) {
+      await form.waitForFunction(() => !document.querySelector('[role="listitem"] input[disabled], [role="listbox"][aria-disabled="true"]'), null, { timeout: 10_000 }).catch(() => {})
+      await form.waitForTimeout(1000)
+      await panel.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent === 'Completar esta página')!.click())
+      await panel.waitForFunction(() => /quedaron bien|hay que mirarlas/.test(document.body.innerText), null, { timeout: 30_000 })
+      const estados = await panel.locator('.preguntas li').evaluateAll((lis) => lis.map((li) => `${li.querySelector('.pregunta')!.textContent!.slice(0, 40)}: ${li.querySelector('.origen .ok') ? 'ok' : li.querySelector('.origen .error') ? 'MIRAR' : '—'}`))
+      console.log(`Página ${pagina}: ${await panel.locator('main > p.ok, main > p.error').first().innerText()}\n   ${estados.join('\n   ')}`)
+      await panel.screenshot({ path: path.join('fixtures', 't4', 'capturas', `b-todos-los-tipos-p${pagina}.png`), fullPage: true })
+      await form.bringToFront()
+      const s = await pedir(panel, tabId, { tipo: 'leer' })
+      if (!s.estado.seccion.haySiguiente) break
+      await personaApretaSiguiente(form)
+      await panel.getByText('Fechas y valoración').waitFor({ timeout: 15_000 })
+    }
+  } finally {
+    await context.close()
+  }
+}
+
 if (escenario === 'contenido-b') await contenidoB()
+else if (escenario === 'todos-los-tipos-b') await todosLosTiposB()
 else if (escenario === 'panel-en') await panelEn(process.argv[3], process.argv[4])
 else if (escenario === 'una-llamada-b') await unaLlamadaB()
 else if (escenario === 'panel-b') await panelB()
