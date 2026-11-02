@@ -180,7 +180,12 @@ try {
           avanzoLaPersona = true
           break
         }
-        pendientes = await revisarPendientes()
+        try {
+          pendientes = await revisarPendientes()
+        } catch (e) {
+          // La página está navegando o se recargó (p. ej. Google guarda el borrador): se vuelve a revisar en el próximo ciclo.
+          anotar(`aviso: no se pudo revisar la página (${String((e as Error).message).split('\n')[0]}); reintento`)
+        }
       }
       msEsperandoPersona += performance.now() - tPausa
       if (avanzoLaPersona) {
@@ -294,9 +299,14 @@ try {
     await context.waitForEvent('close', { timeout: 0 })
   }
 } catch (e) {
-  if (!(e instanceof Corte)) throw e
-  console.log(e.message)
-  codigoSalida = e.codigo
+  if (e instanceof Corte) {
+    console.log(e.message)
+    codigoSalida = e.codigo
+  } else {
+    const cerrada = /closed|Target page, context or browser has been closed/i.test(String((e as Error).message))
+    console.log(cerrada ? 'ERROR: se cerró la ventana del navegador antes de terminar.' : `ERROR inesperado: ${(e as Error).stack ?? e}`)
+    codigoSalida = 1
+  }
 } finally {
   await context.close().catch(() => {})
   process.exitCode = codigoSalida
