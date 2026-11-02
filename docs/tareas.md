@@ -7,7 +7,8 @@ Tablero de tareas que mission control (chat general) asigna al **chat desarrollo
 | T1 | 1. Motor | Lector de estructura de Google Forms | **Cerrada y aprobada (30/10/2026)** — ver "Cierre" y "Verificación" abajo |
 | T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | **Cerrada y aprobada (31/10/2026)** |
 | T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** — criterio 2 reformulado |
-| T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | Asignada (02/11/2026) |
+| T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** |
+| T5 | 3. Drive + Firebase | Servidor publicado y cuentas reales (chat desarrollo) | Asignada (02/11/2026) |
 
 ---
 
@@ -257,3 +258,85 @@ Revisado de forma independiente:
 **Evidencia para cerrar:** capturas del panel en cada momento (respuestas, completado, tareas de la persona, última página, un error), resultado de la búsqueda de la clave en la extensión compilada, salida de `npm test` y de la compilación, informe del desplegable, commits. Actualizar el estado en la tabla y el "Cierre" en `docs/tareas.md`.
 
 **Fuera de esta tarea:** Firebase, cuentas, Drive, publicar en la Chrome Web Store, Microsoft Forms, que la extensión apriete "Siguiente".
+
+### Cierre (02/11/2026) — Claude Code
+Código: `extension/` (WXT + React + TypeScript, MV3: `entrypoints/content.ts`, `entrypoints/sidepanel/`, `lib/`), `app/api/respuestas/route.ts` + `lib/servidor/respuestas.ts`, `tests/api-respuestas.test.ts`, `tools/probar-extension.ts`, `tools/investigar-desplegable.ts`. Commits `4a25d6d` a `87809c7` y el de este cierre. La extensión se carga desde `extension/.output/chrome-mv3` (`cd extension && npm install && npm run build`); el servidor con `npm run dev`.
+
+| Criterio | Resultado | Evidencia |
+|---|---|---|
+| 1. A en el Chrome de Ezequiel | ✅ 5 páginas; 18/18 campos de texto y opción "quedaron bien" (5 + 7 + 4 + 2); tareas de la persona (bases y 4 archivos) aparecen y se tachan solas al hacerlas; última página con el cartel "Revisá todo y apretá «Enviar» vos", sin apretar "Enviar" | `fixtures/t4/capturas/chrome-a-*.png` |
+| 2. B, todos los tipos | ✅ 8/8 ok desde el panel (casillas, desplegable, respuesta corta, fecha, hora, escala, cuadrícula de opción y de casillas), con las respuestas de prueba cargadas en la memoria de la extensión. En el Chrome de Ezequiel, con la ficha de demo: 2/2 ok (casillas y desplegable). El desplegable con borrador ya no es un caso aparte (ver hallazgo 1) | `fixtures/t4/verificaciones.md`, `capturas/b-todos-los-tipos-*.png`, `capturas/chrome-b-*.png` |
+| 3. 1 llamada por formulario | ✅ B: recargar, cerrar y reabrir el panel, pasar de página → 1 llamada (contada en el registro del servidor). A en el Chrome de Ezequiel: 1 llamada en toda la corrida | `fixtures/t4/una-llamada-b.txt` |
+| 4. < 20 s hasta ver las respuestas | ✅ B: 6,5 s; A: 12,8 s (Chrome de Ezequiel) | `capturas/chrome-b-1-respuestas.png`, `chrome-a-1-bases.png` |
+| 5. Clave fuera de la extensión | ✅ 0 apariciones de la clave completa, de un tramo de 20 caracteres, de patrones de clave de Google y del texto `GEMINI_API_KEY` en `extension/.output/chrome-mv3` | `fixtures/t4/verificaciones.md` |
+| 6. Nunca "Enviar" ni "Borrar" | ✅ la extensión no hace clic en botones del formulario; los únicos eventos son del motor, dentro de las preguntas. Con el panel cerrado no toca nada (probado en el Chrome de Ezequiel) | `fixtures/t4/verificaciones.md` |
+| 7. Errores entendibles | ✅ no es un formulario / falta iniciar sesión (un mensaje para los dos; ver hallazgo 2), servidor apagado, IA sin cupo, IA con falla; "Probar de nuevo" probado | `fixtures/t4/errores.md`, `capturas/error-*.png` |
+| 8. `npm test` y compilación | ✅ `npm test` 32/32; extensión: `tsc` y `wxt build` sin errores | `fixtures/t4/verificaciones.md` |
+| 9. Informe del desplegable | ✅ | `docs/investigacion-desplegable.md` |
+
+**IA en la tarea:** ~15 llamadas, ≈ USD 0,05 (estimado: el contador del servidor se reinicia con cada arranque). Incluye 4 llamadas desperdiciadas por errores de las pruebas, ya corregidos.
+
+**Hallazgos y decisiones para mission control:**
+1. **El desplegable con borrador sí se puede cambiar.** Lo de la T3 era un error del motor (la opción se buscaba antes de abrir la lista y Google la vuelve a dibujar), corregido en `4b4e892`. Probado con un borrador real de Google y desde la extensión. Hay que corregir el aprendizaje en `CLAUDE.md` ("Lo aprendido") y en `docs/plan-mvp.md` ("Límites conocidos"). La tarea de la persona para un desplegable `distinto` queda como red de seguridad.
+2. **"Falta iniciar sesión" comparte mensaje con "no es un formulario":** sin sesión, Google manda la pestaña a `accounts.google.com`, donde la extensión no tiene acceso. Distinguirlo exigiría pedir acceso a la página de inicio de sesión de Google; no se hizo. Decidir si queda así.
+3. El token de desarrollo va dentro de la extensión compilada (es lo previsto hasta las cuentas del paso 3). La clave de Gemini, no.
+4. `next dev` se corta una vez por arranque mostrando un aviso que pide correr `next upgrade --agent=security`; no se ejecutó (fuera de la tarea). Al relanzarlo sigue funcionando. Conviene revisar las actualizaciones de seguridad de Next aparte.
+5. Después de la corrida del A se hicieron tres retoques del panel, sin volver a probarlos en el Chrome de Ezequiel (sí compilación y el B automático): la tarjeta de la bases dice "La respondés vos", lo sugerido no muestra nombres internos de la ficha (como `tecnica_y_links.link_carpeta_drive`) y el texto de las tareas es más grande.
+6. Para las pruebas: en una pestaña oculta Chrome frena las animaciones y el desplegable de Google no se abre; con el panel lateral real el formulario está siempre a la vista.
+
+### Verificación de mission control (02/11/2026)
+Revisado de forma independiente:
+- **Commits y push:** `4a25d6d` a `01bb7d1`, ya en GitHub (`origin/main`).
+- **Permisos de la extensión compilada:** solo `sidePanel` y `storage`, y el script de contenido solo en `https://docs.google.com/forms/*`. Sin código remoto.
+- **Clave de Gemini:** buscada en `extension/.output` (tramo de 20 caracteres y patrón `AIza`): 0 apariciones.
+- **El motor se reutiliza tal cual:** el script de contenido importa `estructura.ts` y `completar.ts` directamente, sin copias.
+- **Servidor:** `/api/respuestas` rechaza pedidos sin el token (401) y responde CORS solo al origen que lo pide.
+- **Pruebas:** las 20 que no usan navegador pasan en una copia limpia del último commit; las de navegador ya se verificaron en la T3.
+- **Desplegable:** el informe (`docs/investigacion-desplegable.md`) es convincente: el problema era del módulo (buscaba la opción antes de abrir la lista), está corregido y probado con borrador real y desde la extensión, sin permisos nuevos.
+
+**Decisiones:**
+1. **Desplegable:** se corrige lo aprendido en `CLAUDE.md` y en el plan. La tarea de la persona para un desplegable `distinto` queda como red de seguridad.
+2. **"Falta iniciar sesión":** queda compartido con "no es un formulario". No se pide acceso a la página de inicio de sesión de Google (sumaría un permiso sensible y alargaría la revisión de la Chrome Web Store). El mensaje debe mencionar las dos posibilidades.
+3. **Actualización de seguridad de Next:** obligatoria antes de publicar el servidor; va como paso 0 de la T5.
+4. **Token de desarrollo dentro de la extensión:** aceptable solo en local. Se elimina en la T5, al llegar las cuentas reales; la extensión no se distribuye antes.
+5. **Retoques del panel sin probar en el Chrome de Ezequiel:** se verifican en la primera corrida de la T5.
+
+**T4 aprobada. Paso 2 (Extensión) cerrado.**
+
+---
+
+## T5 — Servidor publicado y cuentas reales (paso 3 del plan, parte 1 de 3)
+
+**Herramienta:** chat desarrollo (claude.ai, trabajando sobre la carpeta del repo en la computadora de Ezequiel). Antes de tocar código, presentar el plan. Varios pasos los hace Ezequiel en las consolas de Google: el chat desarrollo le indica cuáles y en qué orden. **Mientras tanto, Claude Code en Cursor no trabaja sobre el repo** (nunca dos herramientas a la vez).
+
+**Objetivo:** que StageFlow deje de depender de la computadora de Ezequiel. El servidor queda publicado en Firebase, el artista entra con su cuenta de Google en la app web y en la extensión, y la ficha se guarda en Firestore. Todavía sin Drive: la ficha es la de demo, cargada a la cuenta de Ezequiel.
+
+El paso 3 se divide en tres tareas: **T5** (servidor y cuentas), **T6** (ficha desde Drive) y **T7** (pantalla de revisión y la ficha que aprende).
+
+**Paso 0 — Seguridad:** aplicar la actualización de seguridad que pide Next, en un commit propio. `npm test` y la compilación siguen pasando.
+
+**Qué hay que construir**
+1. **Firebase en el proyecto de Google Cloud existente** (`gen-lang-client-0273571986`, el de Gemini), con plan Blaze. **Alertas de presupuesto** de USD 10 y USD 25.
+2. **App Hosting:** la app Next.js publicada desde la rama `main` de GitHub, con HTTPS. La dirección por defecto de Firebase alcanza; dominio propio más adelante.
+3. **Secretos:** la clave de Gemini en Secret Manager, nunca en el repo ni en archivos que se suban.
+4. **Cuentas:** "Entrar con Google" con Firebase Auth en la app web (con "Salir"). Pantalla de consentimiento de Google en modo prueba, con Ezequiel y el BA como usuarios de prueba.
+5. **Firestore:** las obras de cada usuario guardadas a su nombre. La ficha de demo cargada a la cuenta de Ezequiel. La app web muestra "Mis obras" leyendo de Firestore (la ficha completa se edita en la T7).
+6. **Reglas de seguridad:** cada usuario lee y escribe solo lo suyo. Probado con el emulador de Firestore: otro usuario no puede leer ni escribir datos ajenos.
+7. **`/api/respuestas` con cuentas reales:** exige la sesión de Firebase del usuario (verificada en el servidor), usa la ficha de ese usuario desde Firestore y deja de aceptar el token de desarrollo.
+8. **Extensión:** "Entrar con Google" en el panel con la misma cuenta; la sesión sobrevive a cerrar y abrir Chrome; habla con el servidor publicado. El token de desarrollo se elimina de la extensión. La extensión tiene un identificador fijo (necesario para el inicio de sesión y para que el servidor la reconozca).
+
+**Criterios de aceptación**
+1. La actualización de seguridad de Next está aplicada.
+2. La app web publicada abre por HTTPS; Ezequiel entra con Google, ve su obra y sale.
+3. La clave de Gemini no está en el repo ni en la extensión, y el servidor publicado la lee de Secret Manager.
+4. Las pruebas de las reglas con el emulador pasan: un usuario no puede leer ni escribir obras de otro.
+5. `/api/respuestas` publicado: sin sesión → 401; con sesión de otro usuario → no ve la ficha de Ezequiel; con la sesión de Ezequiel → responde con su ficha.
+6. **De punta a punta, con el servidor publicado y la computadora sin `npm run dev`:** Ezequiel, en su Chrome, entra en el panel con su cuenta y completa el Formulario A con 18 de 18 campos verificados, las tareas de la persona tachándose solas y frenando en la última página. Se verifican también los retoques del panel de la T4.
+7. Cerrar y abrir Chrome no pide entrar de nuevo.
+8. No queda ningún token de desarrollo en la extensión compilada ni en el servidor publicado.
+9. Costo: se informa lo usado de Firebase y Gemini durante la tarea; las alertas de presupuesto están activas (captura).
+10. `npm test` pasa, más las pruebas nuevas de reglas y de la ruta con cuentas.
+
+**Evidencia para cerrar:** dirección publicada, capturas (entrada, "Mis obras", panel con sesión, formulario completado, alertas de presupuesto), salida de las pruebas de reglas, pruebas de los 401, búsqueda de secretos en la extensión compilada, commits. Actualizar la tabla y el "Cierre" en `docs/tareas.md`.
+
+**Fuera de esta tarea:** Drive, extraer la ficha de documentos, la pantalla de revisión, "la ficha aprende", publicar en la Chrome Web Store, dominio propio, cobro.

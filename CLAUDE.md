@@ -21,7 +21,8 @@ Estos dos archivos son copia de los documentos del Proyecto "agente de postulaci
 - **T1 cerrada y aprobada:** lector de estructura de Google Forms en `lib/motor/google-forms/estructura.ts`; comando `npm run leer-form -- <link> <nombre>`; pruebas con `npm test`; fixtures en `fixtures/`.
 - **T2 cerrada y aprobada:** respuestas para cada pregunta con una llamada a Gemini (`lib/motor/google-forms/respuestas.ts`, `lib/motor/ia/gemini.ts`, `npm run proponer`).
 - **T3 cerrada y aprobada:** completado solo DOM en `lib/motor/google-forms/completar.ts`; recorrido `npm run completar`. **Paso 1 (Motor) cerrado.**
-- **T4 asignada a Claude Code (vos):** extensión de Chrome con panel lateral. Ver `docs/tareas.md`.
+- **T4 cerrada y aprobada:** extensión en `extension/` (WXT + React + TS, MV3) y ruta `POST /api/respuestas`. **Paso 2 (Extensión) cerrado.**
+- **T5 asignada al chat desarrollo** (no a Claude Code): servidor publicado en Firebase y cuentas reales. Ver `docs/tareas.md`. Si te abren en este repo mientras la T5 está abierta, no toques código.
 - El agente viejo (`app/api/agent/run/route.ts`, captura → Gemini → Playwright) queda como referencia histórica; no se sigue extendiendo.
 
 ## Decisiones tomadas
@@ -35,7 +36,7 @@ Estos dos archivos son copia de los documentos del Proyecto "agente de postulaci
 - Si una pregunta obligatoria queda vacía, "Siguiente" no avanza y la URL no cambia (`/formResponse`): detectar por contenido de la sección, no por URL.
 - "Borrar formulario" borra también lo que la persona subió a mano.
 - El borrador de Google conserva textos y confirmaciones, pero **no los archivos subidos**.
-- Un desplegable con valor previo del borrador no cambia con eventos disparados desde la página (sí con un clic real).
+- El desplegable con valor previo del borrador **sí** se completa: hay que buscar la opción **después** de abrir la lista, porque Google vuelve a dibujar las opciones (ver `docs/investigacion-desplegable.md`).
 - Detalles del DOM de Google Forms aprendidos en la T3: ver comentarios en `lib/motor/google-forms/completar.ts`.
 
 ## Entorno

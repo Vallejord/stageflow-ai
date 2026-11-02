@@ -99,13 +99,13 @@ El MVP está listo para venderse cuando se cumple todo esto, medido y no estimad
 | Paso | Estado | Estimación |
 |---|---|---|
 | 1. Motor | ✅ Cerrado (T1, T2, T3) | — |
-| 2. Extensión | T4 asignada | 5–7 días |
-| 3. Drive + Firebase | No empezado | 10–15 días (el más grande e incierto) |
+| 2. Extensión | ✅ Cerrado (T4) | — |
+| 3. Drive + Firebase | T5 asignada (servidor y cuentas); siguen T6 (ficha desde Drive) y T7 (revisión y ficha que aprende) | 10–15 días (el más grande e incierto) |
 | 4. Beta con Monte Virgen | No empezado | 7–10 días, más la espera de revisión de la Chrome Web Store |
-| **MVP** | ~25% | **~25–35 días de trabajo ≈ 75–105 h ≈ 6–8 semanas a 5 días por semana** |
+| **MVP** | ~35% | **quedan ~17–25 días de trabajo ≈ 50–75 h ≈ 4–6 semanas** (los pasos 1 y 2 tomaron 4 días, menos de lo estimado) |
 | Lanzamiento comercial (cobro, Microsoft Forms, permiso de Drive para producción, página de venta, términos) | — | 3–5 semanas más |
 
-**Límites conocidos de Google Forms** (aprendidos en el paso 1): los archivos subidos no se guardan en el borrador, así que subirlos es siempre un paso de la persona en cada sesión; un desplegable que ya trae un valor del borrador no se puede cambiar con eventos de la página (se investiga en la T4).
+**Límites conocidos de Google Forms** (aprendidos en el paso 1): los archivos subidos no se guardan en el borrador, así que subirlos es siempre un paso de la persona en cada sesión. (Lo del desplegable con borrador resultó ser un error nuestro, corregido en la T4: se completa sin problemas.)
 
 Riesgos que pueden mover la estimación: la calidad de la extracción de datos desde Drive, los tiempos de revisión de Google (Chrome Web Store y permisos de Drive) y cambios en el formato interno de Google Forms.
 
