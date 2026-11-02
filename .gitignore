@@ -34,3 +34,8 @@ fixtures/t3/html/
 # Extensión (WXT): salida compilada y archivos generados
 extension/.output/
 extension/.wxt/
+
+# Clave privada de la extensión (fija el identificador). No se sube.
+extension/.clave/*.pem
+# Pruebas sueltas
+fixtures/prueba-clave.respuestas.json
