@@ -20,7 +20,8 @@ Estos dos archivos son copia de los documentos del Proyecto "agente de postulaci
 ## Estado (30/10/2026)
 - **T1 cerrada y aprobada:** lector de estructura de Google Forms en `lib/motor/google-forms/estructura.ts`; comando `npm run leer-form -- <link> <nombre>`; pruebas con `npm test`; fixtures en `fixtures/`.
 - **T2 cerrada y aprobada:** respuestas para cada pregunta con una llamada a Gemini (`lib/motor/google-forms/respuestas.ts`, `lib/motor/ia/gemini.ts`, `npm run proponer`).
-- **T3 asignada a Claude Code (vos):** completar y verificar el formulario de punta a punta. Ver `docs/tareas.md`.
+- **T3 cerrada y aprobada:** completado solo DOM en `lib/motor/google-forms/completar.ts`; recorrido `npm run completar`. **Paso 1 (Motor) cerrado.**
+- **T4 asignada a Claude Code (vos):** extensión de Chrome con panel lateral. Ver `docs/tareas.md`.
 - El agente viejo (`app/api/agent/run/route.ts`, captura → Gemini → Playwright) queda como referencia histórica; no se sigue extendiendo.
 
 ## Decisiones tomadas
@@ -33,6 +34,9 @@ Estos dos archivos son copia de los documentos del Proyecto "agente de postulaci
 - Google Forms: los campos de archivo abren el selector de Drive en un iframe; no se pueden completar con Playwright. Son paso manual.
 - Si una pregunta obligatoria queda vacía, "Siguiente" no avanza y la URL no cambia (`/formResponse`): detectar por contenido de la sección, no por URL.
 - "Borrar formulario" borra también lo que la persona subió a mano.
+- El borrador de Google conserva textos y confirmaciones, pero **no los archivos subidos**.
+- Un desplegable con valor previo del borrador no cambia con eventos disparados desde la página (sí con un clic real).
+- Detalles del DOM de Google Forms aprendidos en la T3: ver comentarios en `lib/motor/google-forms/completar.ts`.
 
 ## Entorno
 Windows. Carpeta `C:\Users\USUARIO\Documents\DEV\stageflow-ai`. Usar `npm` (pnpm no está instalado). Clave en `.env.local` (`GEMINI_API_KEY`), facturación prepaga con tope mensual de USD 10. Perfil de navegador con sesión de Google en `.browser-user-data/` (no se sube a git).

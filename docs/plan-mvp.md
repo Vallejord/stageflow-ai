@@ -62,7 +62,7 @@ Después: Microsoft Forms, cobro y lanzamiento.
 
 ## Reglas
 - Nada se da por funcionando sin una prueba que lo demuestre.
-- No se prueba contra convocatorias reales hasta la beta. El formulario de prueba es solo para desarrollo; el artista nunca lo ve.
+- No se completan convocatorias reales hasta la beta (leer su estructura sí está permitido). El formulario de prueba es solo para desarrollo; el artista nunca lo ve.
 - No se abren frentes fuera de este plan sin cambiar primero este documento.
 
 ## Stack y costos (estimados al 30/10/2026; precios de terceros, verificar al contratar)
@@ -81,6 +81,35 @@ Después: Microsoft Forms, cobro y lanzamiento.
 | Dominio | — | ~USD 15/año | ~USD 15/año |
 
 Estimación: MVP ≈ USD 5 únicos + ~USD 0/mes (más la IA, de centavos). Producto con ~2.000 postulaciones/mes ≈ USD 100–150/mes más comisiones de cobro. Poner alertas de presupuesto en Google Cloud desde el primer día. Para reportes del negocio más adelante: exportar Firestore a BigQuery. El costo principal no es la infraestructura: es el tiempo de desarrollo.
+
+## Criterios de "MVP terminado"
+El MVP está listo para venderse cuando se cumple todo esto, medido y no estimado:
+1. **Alta en minutos:** un artista nuevo crea su cuenta, conecta su carpeta de Drive y tiene su ficha lista en menos de 10 minutos de su tiempo.
+2. **Ficha confiable:** con la carpeta real de Monte Virgen, cada dato extraído indica su fuente, ninguno es inventado y al menos el 95% es correcto sin corrección.
+3. **Formularios:** sobre un corpus de al menos 10 formularios reales de convocatorias en Google Forms, el lector lee el 100% de la estructura y al menos el 95% de los campos de texto y opción quedan correctos y verificados.
+4. **Cero errores silenciosos:** ningún valor incorrecto queda escrito sin estar marcado "a revisar".
+5. **Postular es rápido:** completar, revisar y dejar listo para enviar un formulario típico lleva menos de 3 minutos del artista (sin contar subir archivos).
+6. **Nunca envía, nunca se traba:** el sistema jamás aprieta "Enviar"; si algo bloquea, lo dice con claridad en lugar de quedarse girando.
+7. **La ficha aprende:** una respuesta nueva dada en un formulario aparece sola en el siguiente.
+8. **Costo:** menos de USD 0,05 de IA por postulación.
+9. **Uso real:** Monte Virgen postula a una convocatoria real con StageFlow, sola, sin ayuda técnica.
+10. **Distribución:** app web publicada, extensión instalable (no listada) y política de privacidad publicada.
+
+## Estado y estimación (actualizado 2/11/2026, trabajando 3 h por día)
+| Paso | Estado | Estimación |
+|---|---|---|
+| 1. Motor | ✅ Cerrado (T1, T2, T3) | — |
+| 2. Extensión | T4 asignada | 5–7 días |
+| 3. Drive + Firebase | No empezado | 10–15 días (el más grande e incierto) |
+| 4. Beta con Monte Virgen | No empezado | 7–10 días, más la espera de revisión de la Chrome Web Store |
+| **MVP** | ~25% | **~25–35 días de trabajo ≈ 75–105 h ≈ 6–8 semanas a 5 días por semana** |
+| Lanzamiento comercial (cobro, Microsoft Forms, permiso de Drive para producción, página de venta, términos) | — | 3–5 semanas más |
+
+**Límites conocidos de Google Forms** (aprendidos en el paso 1): los archivos subidos no se guardan en el borrador, así que subirlos es siempre un paso de la persona en cada sesión; un desplegable que ya trae un valor del borrador no se puede cambiar con eventos de la página (se investiga en la T4).
+
+Riesgos que pueden mover la estimación: la calidad de la extracción de datos desde Drive, los tiempos de revisión de Google (Chrome Web Store y permisos de Drive) y cambios en el formato interno de Google Forms.
+
+**Trabajo en paralelo para el BA:** armar el corpus de formularios reales (criterio 3). Leer la estructura de una convocatoria real es seguro porque el lector no escribe nada; la regla de no probar contra convocatorias reales aplica a completar, no a leer.
 
 ## Recursos
 - Formulario de prueba (solo desarrollo): https://docs.google.com/forms/d/e/1FAIpQLScGyoVrpvBNlHo-zruCVa8G07vl6mhcddmr2Uyt8Kbv8LsJKg/viewform

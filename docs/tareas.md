@@ -6,7 +6,8 @@ Tablero de tareas que mission control (chat general) asigna al **chat desarrollo
 |---|---|---|---|
 | T1 | 1. Motor | Lector de estructura de Google Forms | **Cerrada y aprobada (30/10/2026)** — ver "Cierre" y "Verificación" abajo |
 | T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | **Cerrada y aprobada (31/10/2026)** |
-| T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | Asignada (31/10/2026) |
+| T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** — criterio 2 reformulado |
+| T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | Asignada (02/11/2026) |
 
 ---
 
@@ -203,3 +204,56 @@ Código: `lib/motor/google-forms/completar.ts` (completado, solo DOM), `tools/co
 3. DOM de Google Forms aprendido (documentado en `completar.ts`): el desplegable responde a mousedown + mouseup, no a click(); las cuadrículas se dibujan dos veces (la copia deshabilitada no tiene `data-field-index`); un archivo subido se marca con `[data-id][data-mime-type]` dentro de la pregunta y un input hidden `entry.N` **fuera** de la pregunta; el selector de archivos abre un `[role=dialog]` fuera del `<form>` con su propio título; los campos llegan deshabilitados hasta que corre el JS de Google; la página exige Trusted Types (`addScriptTag` no funciona; se inyecta con `addInitScript`).
 4. La prueba de la T2 "IA simulada correcta" leía la ficha viva; ahora usa `tests/ficha-t2.json` (la ficha con la que se escribió lo esperado). Lo esperado de la T2 no se tocó.
 5. Durante la tarea se corrigieron: ventana con tamaño fijo (la persona no podía scrollear), detección de archivos, pausa que se caía si la página se recargaba, y el selector de archivos que contaba como cambio de página. Los informes de la corrida 1 tienen filas repetidas por ese último error (ya corregido; la corrida 2 sale limpia).
+
+### Verificación de mission control (02/11/2026)
+Revisado de forma independiente:
+- **Pruebas:** las 12 de la T3 pasan en una copia aparte con el Chromium de Playwright (sin el Chrome del usuario). Las de T1 y T2 siguen pasando.
+- **Módulo de completado:** solo `import type`; listo para la extensión.
+- **Corrida 2 del A (informe y captura):** 18 de 18 campos `ok`, llega a la página 5 con "Enviar" visible y sin apretar; los únicos clics en botones fueron 3 en "Siguiente"; 1 llamada a la IA (USD 0,0093); 20,1 s sin contar la espera de la persona.
+- **Agente viejo:** sin cambios.
+
+**Decisión 1 — Criterio 2 reformulado:** Google no conserva los archivos subidos en el borrador, así que el criterio queda: *"la segunda corrida retoma desde el borrador sin pedir de nuevo la aceptación de bases y solo pausa para los archivos"*. Se cumple. Consecuencia de producto: subir los archivos es siempre un paso de la persona en cada sesión; la extensión debe guiarlo bien (qué archivo de su Drive y en qué pregunta) y avisar que, si cierra el formulario, tendrá que subirlos de nuevo.
+
+**Decisión 2 — Desplegable con valor previo del borrador:** no bloquea el paso 1 (queda informado como `distinto` y pasa a la persona, nunca silencioso). Pero los desplegables son comunes en convocatorias reales (país, provincia, disciplina), así que **se investiga en la T4**, dentro de la extensión, que es donde importa.
+
+**T3 aprobada. Paso 1 (Motor) cerrado.**
+
+---
+
+## T4 — Extensión de Chrome: completar desde el panel lateral (paso 2 del plan)
+
+**Herramienta:** Claude Code en Cursor. Empezar en modo plan.
+
+**Objetivo:** que una persona, en su Chrome de siempre y con su sesión de Google, abra un formulario y lo complete desde el panel de StageFlow, sin terminal. Usa el motor de los pasos anteriores y la ficha de demo. Todavía sin Firebase, sin cuentas y sin Drive.
+
+**Qué hay que construir**
+1. **Extensión** (Chrome MV3, WXT + React + TypeScript) en la carpeta `extension/` del mismo repo, instalable con "Cargar descomprimida".
+   - Permisos mínimos: solo páginas de Google Forms (`https://docs.google.com/forms/*`), panel lateral y almacenamiento. Nada de código remoto.
+   - El script de contenido **importa directamente** `lib/motor/google-forms/estructura.ts` y `completar.ts` (los mismos archivos, sin copiarlos).
+2. **Servidor:** una ruta `POST /api/respuestas` en la app Next.js que recibe la estructura, llama a `proponerRespuestas` con `data/obra-demo.json` y devuelve las propuestas. La clave de Gemini queda solo en el servidor.
+   - Acceso temporal de desarrollo: un token de desarrollo configurado en la extensión y en `.env.local`, y la ruta solo acepta pedidos con ese token. (Las cuentas reales llegan en el paso 3.)
+   - Corre local con `npm run dev`.
+3. **Panel lateral**, en castellano simple y sin jerga técnica:
+   - Al abrir un formulario: título y lista de preguntas de la sección visible con la respuesta propuesta y su origen ("de tu ficha", "propuesta, revisala", "sin dato").
+   - Botón **"Completar esta página"**: escribe, verifica y muestra por campo si quedó bien o hay que mirarlo.
+   - **Tareas de la persona** bien visibles: qué archivo subir en qué pregunta, y la aceptación de bases. Se tachan solas cuando la persona las hace.
+   - La persona aprieta "Siguiente" en el formulario; el panel detecta la nueva página y ofrece completarla.
+   - En la última página: "Revisá todo y apretá Enviar vos". Aviso fijo: "Si cerrás el formulario, Google no guarda los archivos: vas a tener que subirlos de nuevo".
+   - Estados de error claros: servidor apagado, IA sin cupo o con falla, no es un Google Form, falta iniciar sesión.
+4. **Una sola llamada a la IA por formulario:** las respuestas se piden una vez y se guardan para todas las páginas y si la persona recarga.
+5. **Investigación del desplegable:** probar, dentro de la extensión, si se puede cambiar un desplegable que ya trae un valor del borrador. Documentar qué se probó, qué funciona y qué se recomienda (por ejemplo, dejarlo como tarea de la persona o usar otra vía), sin agregar permisos peligrosos sin consultarlo.
+
+**Criterios de aceptación**
+1. Con el Formulario A, en el Chrome normal de Ezequiel: el panel completa las 5 páginas y los 18 campos de texto y opción quedan verificados `ok`; las tareas de la persona (bases y 4 archivos) aparecen y se tachan solas al hacerlas; llega a la última página sin apretar "Enviar".
+2. Con el Formulario B: todos los tipos quedan `ok`, salvo el caso documentado del desplegable con borrador, que aparece como tarea de la persona.
+3. **1 llamada a la IA por formulario**, aunque se recargue la página o se cambie de sección.
+4. Desde que se abre el panel hasta ver las respuestas: menos de 20 segundos.
+5. **La clave de Gemini no aparece en ningún archivo de la extensión compilada** (verificado buscándola en la carpeta de salida).
+6. La extensión nunca hace clic en "Enviar" ni en "Borrar formulario" (verificable en el código).
+7. Cada estado de error del punto 3 se probó y muestra un mensaje que una persona no técnica entiende.
+8. `npm test` sigue pasando y la extensión compila sin errores de TypeScript.
+9. Informe de la investigación del desplegable con su recomendación.
+
+**Evidencia para cerrar:** capturas del panel en cada momento (respuestas, completado, tareas de la persona, última página, un error), resultado de la búsqueda de la clave en la extensión compilada, salida de `npm test` y de la compilación, informe del desplegable, commits. Actualizar el estado en la tabla y el "Cierre" en `docs/tareas.md`.
+
+**Fuera de esta tarea:** Firebase, cuentas, Drive, publicar en la Chrome Web Store, Microsoft Forms, que la extensión apriete "Siguiente".
