@@ -222,8 +222,10 @@ function presionar(el: Element) {
 async function elegirEnDesplegable(item: Element, valor: string) {
   const lista = item.querySelector('[role="listbox"]')
   if (!lista || lista.querySelector('[role="option"][aria-selected="true"]')?.getAttribute('data-value') === valor) return
-  const destino = [...lista.querySelectorAll('[role="option"]')].find((o) => o.getAttribute('data-value') === valor)
-  if (!destino) return
+  // Google vuelve a dibujar las opciones al abrir la lista: la buscada se ubica cada vez, nunca antes de abrir.
+  const buscarDestino = () =>
+    [...lista.querySelectorAll('[role="option"]')].filter((o) => o.getAttribute('data-value') === valor).find((o) => o.getBoundingClientRect().height > 0)
+  if (![...lista.querySelectorAll('[role="option"]')].some((o) => o.getAttribute('data-value') === valor)) return
   // Cerrado, solo se ve la opción elegida: presionarla abre la lista; presionar la buscada la elige.
   // Si el JS de Google todavía no tomó el desplegable (aria-disabled), no abre: se reintenta hasta 3 s.
   for (let intento = 0; intento < 6 && lista.getAttribute('aria-expanded') !== 'true'; intento++) {
@@ -233,13 +235,16 @@ async function elegirEnDesplegable(item: Element, valor: string) {
   // La lista se abre con una animación: si se presiona antes de que termine, Google elige otra opción.
   // Se espera a que la opción buscada tenga alto y no se mueva entre dos lecturas.
   let antes = ''
+  let destino: Element | undefined
   for (let i = 0; i < 20; i++) {
     await espera(100)
-    const b = destino.getBoundingClientRect()
-    const ahora = `${Math.round(b.top)}:${Math.round(b.height)}`
-    if (b.height > 0 && ahora === antes) break
+    destino = buscarDestino()
+    const b = destino?.getBoundingClientRect()
+    const ahora = b ? `${Math.round(b.top)}:${Math.round(b.height)}` : ''
+    if (b && ahora === antes) break
     antes = ahora
   }
+  if (!destino) return
   await espera(100)
   presionar(destino)
   for (let i = 0; i < 10 && lista.getAttribute('aria-expanded') === 'true'; i++) await espera(100)
