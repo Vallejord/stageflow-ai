@@ -188,7 +188,34 @@ async function unaLlamadaB() {
   }
 }
 
+/** Abre el panel sobre cualquier página, espera y guarda lo que muestra (para los estados de error). */
+async function panelEn(url: string, nombre: string, segundos = 12) {
+  const DIR = path.join('fixtures', 't4', 'capturas')
+  mkdirSync(DIR, { recursive: true })
+  const { context, idExtension } = await abrirConExtension()
+  try {
+    const pagina = await context.newPage()
+    await pagina.goto(url, { waitUntil: 'load' }).catch(() => {})
+    const ayudante = await context.newPage()
+    await ayudante.goto(`chrome-extension://${idExtension}/sidepanel.html`)
+    await pagina.bringToFront()
+    const [tabId] = await ayudante.evaluate(async () => (await chrome.tabs.query({ active: true })).map((t) => t.id!))
+    await ayudante.close()
+    const panel = await context.newPage()
+    await panel.setViewportSize({ width: 400, height: 700 })
+    await panel.goto(`chrome-extension://${idExtension}/sidepanel.html?tab=${tabId}`)
+    await pagina.bringToFront()
+    await panel.waitForTimeout(segundos * 1000)
+    console.log(`URL de la pestaña: ${pagina.url()}`)
+    console.log(`Panel: ${(await panel.locator('body').innerText()).replace(/\n+/g, ' | ')}`)
+    await panel.screenshot({ path: path.join(DIR, `${nombre}.png`), fullPage: true })
+  } finally {
+    await context.close()
+  }
+}
+
 if (escenario === 'contenido-b') await contenidoB()
+else if (escenario === 'panel-en') await panelEn(process.argv[3], process.argv[4])
 else if (escenario === 'una-llamada-b') await unaLlamadaB()
 else if (escenario === 'panel-b') await panelB()
 else if (escenario) throw new Error(`Escenario desconocido: ${escenario}`)

@@ -141,8 +141,11 @@ export function App() {
     return (
       <main>
         <h1>StageFlow</h1>
-        <p className="vacio">Abrí un formulario de Google Forms para empezar.</p>
-        <p className="nota">Si el formulario te pidió iniciar sesión en Google, iniciá sesión y volvé a abrirlo.</p>
+        <p className="vacio">No vemos un formulario de Google Forms en esta pestaña.</p>
+        <p className="nota">
+          Abrí el link de la convocatoria. <strong>Si Google te pide iniciar sesión</strong>, iniciá sesión con tu cuenta: el formulario se abre solo y
+          StageFlow sigue desde ahí.
+        </p>
       </main>
     )
   if (!estado) return <main><h1>StageFlow</h1><p className="nota">Mirando la página…</p></main>
