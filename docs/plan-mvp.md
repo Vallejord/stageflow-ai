@@ -58,6 +58,7 @@ Después: Microsoft Forms, cobro y lanzamiento.
 ## Cómo trabajamos
 - **Mission control** (chat general): visión del proyecto, decisiones, plan y asignación de tareas con criterios de aceptación.
 - **Chat desarrollo**: ejecuta una tarea por vez y la cierra con evidencia.
+- **Claude Code en Cursor (desde la T3)**: ejecuta tareas directamente en el repo. No ve los documentos del Proyecto: lee `docs/plan-mvp.md`, `docs/tareas.md` y `CLAUDE.md` del repo. Mission control mantiene sincronizadas ambas copias. Las tareas se ejecutan de a una, nunca dos herramientas en paralelo sobre el mismo código.
 
 ## Reglas
 - Nada se da por funcionando sin una prueba que lo demuestre.
