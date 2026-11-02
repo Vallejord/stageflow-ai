@@ -18,9 +18,9 @@
     },
     "costoUSD": 0,
     "msIA": 0,
-    "msTotal": 5089,
+    "msTotal": 4993,
     "msEsperandoPersona": 0,
-    "msSinPersona": 5089,
+    "msSinPersona": 4993,
     "clicsEnBotones": [
       "clic en \"Siguiente\""
     ]
@@ -109,27 +109,27 @@
   ],
   "registro": [
     {
-      "ms": 2251,
+      "ms": 1978,
       "evento": "formulario abierto"
     },
     {
-      "ms": 2305,
+      "ms": 2036,
       "evento": "respuestas leídas de tests/respuestas-prueba-form-b.json (sin IA)"
     },
     {
-      "ms": 2353,
+      "ms": 2092,
       "evento": "página 1: PRUEBA StageFlow — Formulario B (tipos) — 3 preguntas"
     },
     {
-      "ms": 2682,
+      "ms": 2583,
       "evento": "clic en \"Siguiente\""
     },
     {
-      "ms": 3916,
+      "ms": 3891,
       "evento": "página 2: PRUEBA StageFlow — Formulario B (tipos) / Fechas y valoración — 5 preguntas"
     },
     {
-      "ms": 4778,
+      "ms": 4709,
       "evento": "última página: \"Enviar\" visible. No se aprieta."
     }
   ]

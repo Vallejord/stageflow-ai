@@ -27,3 +27,6 @@ salidas/
 
 # Configuración local de Claude Code
 .claude/settings.local.json
+
+# HTML de cada corrida del recorrido (se reescribe; las pruebas usan copias fijas en fixtures/html/)
+fixtures/t3/html/

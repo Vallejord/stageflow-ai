@@ -49,7 +49,7 @@ const api = <T>(page: Page, fn: string, arg?: unknown): Promise<T> =>
  * Espera a que el JS de Google habilite los campos (en la página recién cargada vienen deshabilitados).
  * Se ignoran las copias de las cuadrículas, que quedan deshabilitadas y sin valor para siempre.
  */
-const DESHABILITADOS = ['input[disabled]', 'textarea[disabled]', '[aria-disabled="true"][data-value]:not([data-value=""])', '[aria-disabled="true"][data-answer-value]']
+const DESHABILITADOS = ['input[disabled]', 'textarea[disabled]', '[role="listbox"][aria-disabled="true"]', '[aria-disabled="true"][data-value]:not([data-value=""])', '[aria-disabled="true"][data-answer-value]']
   .map((s) => `[role="listitem"] ${s}`)
   .join(', ')
 const esperarListo = (page: Page) =>
@@ -75,8 +75,13 @@ const leerSeguro = async (page: Page): Promise<LecturaSeccion | null> => {
   }
 }
 
-function instruccion(p: Pendiente, propuestas: Propuesta[]): string {
+/** Lo que tiene que hacer la persona: lo del módulo más los desplegables que no se dejaron cambiar. */
+type PendienteRecorrido = Omit<Pendiente, 'tipo'> & { tipo: Pendiente['tipo'] | 'desplegable'; valor?: string }
+
+function instruccion(p: PendienteRecorrido, propuestas: Propuesta[]): string {
   const prop = propuestas.find((x) => x.entry === p.entry)
+  // Con un valor previo del borrador, el desplegable de Google no responde a eventos desde la página (ver T3).
+  if (p.tipo === 'desplegable') return `Elegí "${p.valor}" en el desplegable "${p.pregunta.slice(0, 90)}" (no se pudo cambiar solo)`
   if (p.tipo === 'confirmacion') return `Leé las bases y respondé vos: "${p.pregunta.slice(0, 90)}"`
   return `Subí el archivo en "${p.pregunta.slice(0, 90)}"${prop?.nota ? ` — sugerido: ${prop.nota}` : ''}`
 }
@@ -137,7 +142,7 @@ try {
   }
 
   const filas: (ResultadoCampo & { pagina: number })[] = []
-  const pendientesPersona: (Pendiente & { pagina: number })[] = []
+  const pendientesPersona: (PendienteRecorrido & { pagina: number })[] = []
   let pausas = 0
   let bloqueo: { pregunta: string; error: string; msDetectado: number }[] | null = null
   let llegoAEnviar = false
@@ -150,9 +155,17 @@ try {
 
     if (vaciar && lectura.campos.some((c) => c.entries.includes(vaciar))) await api(page, 'vaciarCampo', vaciar)
     let resultados = await api<ResultadoCampo[]>(page, 'completarSeccion', propuestas)
+    const trabados = resultados.filter((r) => r.tipo === 'desplegable' && r.estado === 'distinto')
+    const revisarPendientes = async (): Promise<PendienteRecorrido[]> => {
+      const delModulo = await api<Pendiente[]>(page, 'estadoPendientes', propuestas)
+      if (!trabados.length) return delModulo
+      const s = await leerSeguro(page)
+      const valor = (entry: string) => s?.campos.find((c) => c.entry === entry)?.valor
+      return [...delModulo, ...trabados.map((r) => ({ entry: r.entry, pregunta: r.pregunta, tipo: 'desplegable' as const, valor: r.esperado, hecho: valor(r.entry) === r.esperado }))]
+    }
 
-    // Pausa para la persona: archivos obligatorios sin subir o confirmaciones sin responder.
-    let pendientes = await api<Pendiente[]>(page, 'estadoPendientes', propuestas)
+    // Pausa para la persona: archivos obligatorios sin subir, confirmaciones sin responder o desplegables trabados.
+    let pendientes = await revisarPendientes()
     if (pendientes.some((p) => !p.hecho)) {
       pausas++
       const tPausa = performance.now()
@@ -160,7 +173,7 @@ try {
       for (const p of pendientes.filter((x) => !x.hecho)) console.log(`   → ${instruccion(p, propuestas)}`)
       while (pendientes.some((p) => !p.hecho) && performance.now() - tPausa < ESPERA_PERSONA_MS) {
         await page.waitForTimeout(REVISAR_CADA_MS)
-        pendientes = await api<Pendiente[]>(page, 'estadoPendientes', propuestas)
+        pendientes = await revisarPendientes()
       }
       msEsperandoPersona += performance.now() - tPausa
       if (pendientes.some((p) => !p.hecho)) {
@@ -193,6 +206,8 @@ try {
       await page.waitForTimeout(250)
       nueva = await leerSeguro(page)
       if (nueva && nueva.firma !== lectura.firma) break
+      // Misma sección con mensaje de error de Google: no avanzó, no hace falta esperar más.
+      if (nueva && nueva.campos.some((c) => c.error) && performance.now() - tClic > 750) break
     }
     if (!nueva || nueva.firma === lectura.firma) {
       const ms = Math.round(performance.now() - tClic)

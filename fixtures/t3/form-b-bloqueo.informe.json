@@ -1,0 +1,94 @@
+{
+  "resumen": {
+    "formulario": "PRUEBA StageFlow — Formulario B (tipos)",
+    "llegoAEnviar": false,
+    "bloqueo": [
+      {
+        "pregunta": "¿En qué disciplinas trabaja la compañía?",
+        "error": "Esta pregunta es obligatoria",
+        "msDetectado": 759
+      }
+    ],
+    "completadosYVerificados": 2,
+    "completados": 2,
+    "distintosONoEncontrados": [],
+    "aRevisar": 0,
+    "sinDato": [
+      "¿En qué disciplinas trabaja la compañía?"
+    ],
+    "pendientesPersona": [],
+    "pausas": 0,
+    "llamadasIA": 0,
+    "tokens": {
+      "entrada": 0,
+      "salida": 0,
+      "pensamiento": 0
+    },
+    "costoUSD": 0,
+    "msIA": 0,
+    "msTotal": 3296,
+    "msEsperandoPersona": 0,
+    "msSinPersona": 3296,
+    "clicsEnBotones": [
+      "clic en \"Siguiente\""
+    ]
+  },
+  "filas": [
+    {
+      "entry": "entry.1121520150",
+      "pregunta": "¿En qué disciplinas trabaja la compañía?",
+      "tipo": "casillas",
+      "accion": "sin_dato",
+      "esperado": "",
+      "leido": "",
+      "estado": null,
+      "pagina": 1
+    },
+    {
+      "entry": "entry.474601466",
+      "pregunta": "Provincia",
+      "tipo": "desplegable",
+      "accion": "completar",
+      "esperado": "Córdoba",
+      "leido": "Córdoba",
+      "estado": "ok",
+      "pagina": 1
+    },
+    {
+      "entry": "entry.223954454",
+      "pregunta": "Año de estreno",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "2019",
+      "leido": "2019",
+      "estado": "ok",
+      "pagina": 1
+    }
+  ],
+  "registro": [
+    {
+      "ms": 2207,
+      "evento": "formulario abierto"
+    },
+    {
+      "ms": 2267,
+      "evento": "respuestas leídas de tests/respuestas-prueba-form-b.json (sin IA)"
+    },
+    {
+      "ms": 2267,
+      "evento": "prueba de bloqueo: entry.1121520150 queda vacía a propósito"
+    },
+    {
+      "ms": 2313,
+      "evento": "página 1: PRUEBA StageFlow — Formulario B (tipos) — 3 preguntas"
+    },
+    {
+      "ms": 2633,
+      "evento": "clic en \"Siguiente\""
+    },
+    {
+      "ms": 3295,
+      "evento": "\"Siguiente\" no avanzó (detectado en 0.8 s). Bloquea: \"¿En qué disciplinas trabaja la compañía?\" (Esta pregunta es obligatoria)"
+    }
+  ]
+}
