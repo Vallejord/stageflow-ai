@@ -1,0 +1,136 @@
+{
+  "resumen": {
+    "formulario": "PRUEBA StageFlow — Formulario B (tipos)",
+    "llegoAEnviar": true,
+    "bloqueo": null,
+    "completadosYVerificados": 8,
+    "completados": 8,
+    "distintosONoEncontrados": [],
+    "aRevisar": 0,
+    "sinDato": [],
+    "pendientesPersona": [],
+    "pausas": 0,
+    "llamadasIA": 0,
+    "tokens": {
+      "entrada": 0,
+      "salida": 0,
+      "pensamiento": 0
+    },
+    "costoUSD": 0,
+    "msIA": 0,
+    "msTotal": 5089,
+    "msEsperandoPersona": 0,
+    "msSinPersona": 5089,
+    "clicsEnBotones": [
+      "clic en \"Siguiente\""
+    ]
+  },
+  "filas": [
+    {
+      "entry": "entry.1121520150",
+      "pregunta": "¿En qué disciplinas trabaja la compañía?",
+      "tipo": "casillas",
+      "accion": "completar",
+      "esperado": "Teatro + Danza",
+      "leido": "Teatro + Danza",
+      "estado": "ok",
+      "pagina": 1
+    },
+    {
+      "entry": "entry.474601466",
+      "pregunta": "Provincia",
+      "tipo": "desplegable",
+      "accion": "completar",
+      "esperado": "Córdoba",
+      "leido": "Córdoba",
+      "estado": "ok",
+      "pagina": 1
+    },
+    {
+      "entry": "entry.223954454",
+      "pregunta": "Año de estreno",
+      "tipo": "respuesta_corta",
+      "accion": "completar",
+      "esperado": "2019",
+      "leido": "2019",
+      "estado": "ok",
+      "pagina": 1
+    },
+    {
+      "entry": "entry.55975959",
+      "pregunta": "Fecha de estreno",
+      "tipo": "fecha",
+      "accion": "completar",
+      "esperado": "2019-05-17",
+      "leido": "2019-05-17",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.452777983",
+      "pregunta": "Horario preferido de función",
+      "tipo": "hora",
+      "accion": "completar",
+      "esperado": "21:30",
+      "leido": "21:30",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.380367010",
+      "pregunta": "¿Qué tan adaptable es la obra a espacios no convencionales?",
+      "tipo": "escala",
+      "accion": "completar",
+      "esperado": "4",
+      "leido": "4",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.806976356",
+      "pregunta": "Disponibilidad por mes",
+      "tipo": "cuadricula_opcion",
+      "accion": "completar",
+      "esperado": "Disponible | No disponible | Disponible",
+      "leido": "Disponible | No disponible | Disponible",
+      "estado": "ok",
+      "pagina": 2
+    },
+    {
+      "entry": "entry.494853336",
+      "pregunta": "Necesidades técnicas por sala",
+      "tipo": "cuadricula_casillas",
+      "accion": "completar",
+      "esperado": "Sonido | Sonido + Luces + Proyector",
+      "leido": "Sonido | Sonido + Luces + Proyector",
+      "estado": "ok",
+      "pagina": 2
+    }
+  ],
+  "registro": [
+    {
+      "ms": 2251,
+      "evento": "formulario abierto"
+    },
+    {
+      "ms": 2305,
+      "evento": "respuestas leídas de tests/respuestas-prueba-form-b.json (sin IA)"
+    },
+    {
+      "ms": 2353,
+      "evento": "página 1: PRUEBA StageFlow — Formulario B (tipos) — 3 preguntas"
+    },
+    {
+      "ms": 2682,
+      "evento": "clic en \"Siguiente\""
+    },
+    {
+      "ms": 3916,
+      "evento": "página 2: PRUEBA StageFlow — Formulario B (tipos) / Fechas y valoración — 5 preguntas"
+    },
+    {
+      "ms": 4778,
+      "evento": "última página: \"Enviar\" visible. No se aprieta."
+    }
+  ]
+}

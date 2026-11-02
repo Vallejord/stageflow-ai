@@ -31,7 +31,8 @@ const REVISAR_CADA_MS = 3_000
 const ESPERA_AVANCE_MS = 6_000
 const DIR = path.join('fixtures', 't3')
 mkdirSync(DIR, { recursive: true })
-mkdirSync(path.join('fixtures', 'html'), { recursive: true })
+const DIR_HTML = path.join(DIR, 'html') // HTML de cada sección de la corrida (evidencia; las pruebas usan copias fijas en fixtures/html/)
+mkdirSync(DIR_HTML, { recursive: true })
 
 const t0 = performance.now()
 let msEsperandoPersona = 0
@@ -44,10 +45,16 @@ const anotar = (evento: string) => {
 const api = <T>(page: Page, fn: string, arg?: unknown): Promise<T> =>
   page.evaluate(([f, a]) => (window as any).__stageflowCompletar[f as string](a), [fn, arg] as const) as Promise<T>
 
-/** Espera a que el JS de Google habilite los campos (en la página recién cargada vienen deshabilitados). */
+/**
+ * Espera a que el JS de Google habilite los campos (en la página recién cargada vienen deshabilitados).
+ * Se ignoran las copias de las cuadrículas, que quedan deshabilitadas y sin valor para siempre.
+ */
+const DESHABILITADOS = ['input[disabled]', 'textarea[disabled]', '[aria-disabled="true"][data-value]:not([data-value=""])', '[aria-disabled="true"][data-answer-value]']
+  .map((s) => `[role="listitem"] ${s}`)
+  .join(', ')
 const esperarListo = (page: Page) =>
   page
-    .waitForFunction(() => !!(window as any).__stageflowCompletar && !document.querySelector('[role="listitem"] [aria-disabled="true"], [role="listitem"] input[disabled], [role="listitem"] textarea[disabled]'), null, { timeout: 10_000 })
+    .waitForFunction((sel) => !!(window as any).__stageflowCompletar && !document.querySelector(sel), DESHABILITADOS, { timeout: 10_000 })
     .catch(() => anotar('aviso: algunos campos siguen deshabilitados después de 10 s'))
 
 /** Único clic sobre un botón del formulario. Solo "Siguiente"/"Next"; cualquier otro texto es un error. */
@@ -139,7 +146,7 @@ try {
     await esperarListo(page)
     const lectura = (await leerSeguro(page))!
     anotar(`página ${pagina}: ${lectura.titulo || '(sin título)'} — ${lectura.campos.length} preguntas`)
-    writeFileSync(path.join('fixtures', 'html', `${nombre}-p${pagina}.html`), await page.content(), 'utf8')
+    writeFileSync(path.join(DIR_HTML, `${nombre}-p${pagina}.html`), await page.content(), 'utf8')
 
     if (vaciar && lectura.campos.some((c) => c.entries.includes(vaciar))) await api(page, 'vaciarCampo', vaciar)
     let resultados = await api<ResultadoCampo[]>(page, 'completarSeccion', propuestas)
@@ -168,7 +175,7 @@ try {
     }
     pendientesPersona.push(...pendientes.map((p) => ({ ...p, pagina })))
     filas.push(...resultados.map((r) => ({ ...r, pagina })))
-    writeFileSync(path.join('fixtures', 'html', `${nombre}-p${pagina}-completa.html`), await page.content(), 'utf8')
+    writeFileSync(path.join(DIR_HTML, `${nombre}-p${pagina}-completa.html`), await page.content(), 'utf8')
 
     if (lectura.hayEnviar && !lectura.haySiguiente) {
       llegoAEnviar = true

@@ -149,3 +149,39 @@ test('Archivos: no se tocan y se marcan pendientes hasta que hay un archivo subi
   assert.equal(despues[0].hecho, true)
   await page.close()
 })
+
+// ---- HTML real guardado por el recorrido del B ya completado (todos los tipos) ----
+const pruebaB: Propuesta[] = JSON.parse(leer('tests/respuestas-prueba-form-b.json')).respuestas
+
+test('Formulario B completado (HTML real): lee cada tipo igual a lo esperado, sin escribir', async () => {
+  for (const [fixture, n] of [['form-b-p1-completa', 3], ['form-b-p2-completa', 5]] as const) {
+    const page = await abrir(fixture)
+    const s = await page.evaluate(() => (window as any).__stageflowCompletar.leerSeccion())
+    assert.equal(s.campos.length, n, fixture)
+    // completarSeccion sin el JS de Google no cambia nada: lo leído es lo que dejó la corrida real.
+    const r = await page.evaluate((p) => (window as any).__stageflowCompletar.completarSeccion(p), pruebaB)
+    assert.equal(r.length, n, fixture)
+    assert.deepEqual(r.filter((x: any) => x.estado !== 'ok'), [], fixture)
+    await page.close()
+  }
+})
+
+test('Cuadrículas: se ignora la copia deshabilitada que dibuja Google', async () => {
+  const page = await abrir('form-b-p2-completa')
+  const copias = await page.evaluate(() => document.querySelectorAll('[role="listitem"] [aria-disabled="true"][role="radio"]:not([data-field-index]), [role="listitem"] [aria-disabled="true"][role="checkbox"]:not([data-field-index])').length)
+  assert.ok(copias > 0, 'el HTML real trae las copias')
+  const s = await page.evaluate(() => (window as any).__stageflowCompletar.leerSeccion())
+  const valor = (t: string) => s.campos.find((c: any) => c.titulo === t).valor
+  assert.equal(valor('Disponibilidad por mes'), 'Disponible | No disponible | Disponible')
+  assert.equal(valor('Necesidades técnicas por sala'), 'Sonido | Sonido + Luces + Proyector')
+  assert.equal(s.hayEnviar, true)
+  assert.equal(s.haySiguiente, false)
+  await page.close()
+})
+
+test('Borrador de una corrida anterior (HTML real): se lee lo que trae', async () => {
+  const page = await abrir('form-b-p1-borrador')
+  const s = await page.evaluate(() => (window as any).__stageflowCompletar.leerSeccion())
+  assert.deepEqual(s.campos.map((c: any) => c.valor), ['Teatro + Danza', 'Córdoba', ''])
+  await page.close()
+})

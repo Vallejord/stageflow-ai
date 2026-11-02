@@ -6,7 +6,8 @@
  * DOM de Google Forms (visto en fixtures/html/):
  * - pregunta: [role=listitem] con [data-params] = "%.@.[id, título, ayuda, tipo, [[entry, opciones, obligatoria, ...], ...]], ...]"
  * - casillas: [role=checkbox][data-answer-value]; opción y escala: [role=radio][data-value]
- * - desplegable: [role=listbox] con [role=option][data-value]
+ * - desplegable: [role=listbox] con [role=option][data-value]; no responde a click(), sí a mousedown + mouseup
+ * - cuadrículas: opciones con data-field-index (número de fila); Google dibuja una copia deshabilitada sin ese atributo
  * - texto: input / textarea; error de la pregunta: [role=alert]
  * Regla: nunca se hace clic en botones del formulario ("Siguiente", "Enviar", "Borrar"); eso lo decide el recorrido.
  */
@@ -114,12 +115,17 @@ const textos = (item: Element) => [...item.querySelectorAll<HTMLInputElement | H
 const marcados = (els: Element[], attr: string) =>
   els.filter((e) => e.getAttribute('aria-checked') === 'true').map((e) => e.getAttribute(attr) ?? '')
 
-/** Filas de una cuadrícula, en orden: cada una con sus radios o casillas. */
+/**
+ * Filas de una cuadrícula, en el orden de data-params: cada una con sus radios o casillas.
+ * Google dibuja la cuadrícula dos veces; la copia (deshabilitada, sin valor) no tiene data-field-index.
+ */
 function filasCuadricula(item: Element): Element[][] {
-  const grupos = [...item.querySelectorAll('[role="radiogroup"], [role="group"]')].filter(
-    (g) => g.querySelector('[role="radio"], [role="checkbox"]') && !g.querySelector('[role="radiogroup"], [role="group"]'),
-  )
-  return grupos.map((g) => [...g.querySelectorAll('[role="radio"], [role="checkbox"]')])
+  const filas: Element[][] = []
+  for (const o of item.querySelectorAll('[role="radio"][data-field-index], [role="checkbox"][data-field-index]')) {
+    const i = Number(o.getAttribute('data-field-index'))
+    ;(filas[i] ??= []).push(o)
+  }
+  return filas
 }
 
 const valorOpcion = (e: Element) => e.getAttribute('data-value') ?? e.getAttribute('data-answer-value') ?? ''
@@ -203,17 +209,24 @@ async function marcarExactas(opciones: Element[], quiero: string[]) {
   }
 }
 
+/** El desplegable de Google no responde a click(): reacciona a mousedown + mouseup sobre una opción. */
+function presionar(el: Element) {
+  const b = el.getBoundingClientRect()
+  const pos = { bubbles: true, cancelable: true, view: window, button: 0, clientX: b.left + 10, clientY: b.top + 10 }
+  for (const t of ['mousedown', 'mouseup']) el.dispatchEvent(new MouseEvent(t, pos))
+}
+
 async function elegirEnDesplegable(item: Element, valor: string) {
-  const lista = item.querySelector<HTMLElement>('[role="listbox"]')
-  if (!lista) return
-  lista.click()
-  await espera(400)
-  // Al abrirse, Google muestra una copia de las opciones; se elige la visible.
-  const opciones = [...item.ownerDocument.querySelectorAll<HTMLElement>(`[role="option"]`)].filter(
-    (o) => o.getAttribute('data-value') === valor && o.getClientRects().length > 0,
-  )
-  ;(opciones.at(-1) ?? lista.querySelector<HTMLElement>(`[role="option"][data-value="${CSS.escape(valor)}"]`))?.click()
-  await espera(400)
+  const lista = item.querySelector('[role="listbox"]')
+  if (!lista || lista.querySelector('[role="option"][aria-selected="true"]')?.getAttribute('data-value') === valor) return
+  const destino = [...lista.querySelectorAll('[role="option"]')].find((o) => o.getAttribute('data-value') === valor)
+  if (!destino) return
+  // Cerrado, solo se ve la opción elegida: presionarla abre la lista; presionar la buscada la elige.
+  presionar(lista.querySelector('[role="option"][aria-selected="true"]') ?? lista.querySelector('[role="option"]')!)
+  for (let i = 0; i < 10 && lista.getAttribute('aria-expanded') !== 'true'; i++) await espera(100)
+  await espera(250)
+  presionar(destino)
+  for (let i = 0; i < 10 && lista.getAttribute('aria-expanded') === 'true'; i++) await espera(100)
 }
 
 const comoLista = (v: unknown): string[] => (v == null ? [] : Array.isArray(v) ? v.map(String) : [String(v)])
