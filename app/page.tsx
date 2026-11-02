@@ -1,41 +1,43 @@
-import { Plus } from 'lucide-react'
-import { AppSidebar } from '@/components/dashboard/app-sidebar'
-import { DashboardHeader } from '@/components/dashboard/dashboard-header'
-import { PlayCard } from '@/components/dashboard/play-card'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { plays } from '@/lib/plays'
+// Inicio de la app web (T5a): solo dice lo que StageFlow hace hoy.
+// "Entrar con Google" y "Mis obras" se agregan en la T5 (B3), cuando funcionen de verdad.
+const PASOS = [
+  'Abrís el formulario de la convocatoria (Google Forms) en Chrome.',
+  'Abrís el panel de StageFlow al costado del formulario.',
+  'StageFlow lee las preguntas y propone una respuesta para cada una con los datos de tu obra, diciendo de dónde sale cada dato.',
+  'Tocás «Completar esta página»: StageFlow escribe cada respuesta, la verifica y te marca lo que tenés que revisar.',
+  'Los archivos y la aceptación de las bases los hacés vos: el panel te dice cuáles y dónde.',
+  'Revisás todo y apretás «Enviar» vos. StageFlow nunca envía.',
+]
 
-export default function Page() {
+export default function Inicio() {
   return (
-    <SidebarProvider style={{ '--sidebar-width': '18rem' } as React.CSSProperties}>
-      <AppSidebar />
-      <SidebarInset>
-        <DashboardHeader />
-        <main className="flex flex-1 flex-col gap-6 p-4 md:p-8">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">Mis Obras</h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground text-pretty">
-              Tu repertorio listo para girar. Completa el kit de cada obra y StageFlow AI la postulará a
-              las convocatorias que encajen.
-            </p>
-          </div>
+    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-8 px-4 py-12 md:py-20">
+      <header className="flex flex-col gap-3">
+        <h1 className="text-3xl font-semibold tracking-tight">StageFlow</h1>
+        <p className="text-lg leading-relaxed text-muted-foreground">
+          Te ayuda a completar formularios de convocatorias con los datos de tu obra. Vos revisás y enviás.
+        </p>
+      </header>
 
-          <section aria-label="Repertorio" className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
-            {plays.map((play) => (
-              <PlayCard key={play.id} play={play} />
-            ))}
-            <button
-              type="button"
-              className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-dashed text-muted-foreground transition-colors hover:border-primary/50 hover:bg-accent/40 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            >
-              <span className="flex size-10 items-center justify-center rounded-full border bg-card">
-                <Plus className="size-5" aria-hidden="true" />
+      <section aria-labelledby="como-funciona" className="flex flex-col gap-4">
+        <h2 id="como-funciona" className="text-xl font-semibold">
+          Cómo funciona hoy
+        </h2>
+        <ol className="flex flex-col gap-3">
+          {PASOS.map((paso, i) => (
+            <li key={paso} className="flex gap-3 rounded-lg border bg-card p-4 leading-relaxed">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold">
+                {i + 1}
               </span>
-              <span className="text-sm font-medium">Añadir otra obra</span>
-            </button>
-          </section>
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+              <span>{paso}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <p className="rounded-lg border border-dashed p-4 text-sm leading-relaxed text-muted-foreground">
+        StageFlow está en desarrollo: por ahora funciona solo con formularios de Google Forms y lo usa únicamente el equipo.
+      </p>
+    </main>
   )
 }
