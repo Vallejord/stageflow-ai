@@ -1,6 +1,6 @@
 // Lee la estructura de un Google Form con la sesión guardada y la guarda en fixtures/.
 // Solo abre y lee: no escribe en el formulario ni toca ningún botón.
-// Uso: pnpm leer-form <link> [nombre] [--perfil-vacio]
+// Uso: npm run leer-form -- <link> [nombre] [--perfil-vacio]
 //   --perfil-vacio: usa un navegador sin sesión (para probar el aviso de inicio de sesión).
 import { chromium } from 'playwright'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
@@ -12,7 +12,7 @@ const args = process.argv.slice(2)
 const perfilVacio = args.includes('--perfil-vacio')
 const [url, nombreArg] = args.filter((a) => !a.startsWith('--'))
 if (!url) {
-  console.error('Uso: pnpm leer-form <link del formulario> [nombre] [--perfil-vacio]')
+  console.error('Uso: npm run leer-form -- <link del formulario> [nombre] [--perfil-vacio]')
   process.exit(1)
 }
 const nombre = nombreArg || 'form'
