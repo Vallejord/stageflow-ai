@@ -1,8 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { leerEstructura, type EstructuraForm } from '../lib/motor/google-forms/estructura.ts'
 import { comparar, tablaMarkdown } from './comparar.ts'
+
+// Las tablas de comparación de cada corrida de npm test van a salidas/ (ignorada por git); la evidencia commiteada queda en fixtures/.
+mkdirSync(new URL('../salidas/', import.meta.url), { recursive: true })
 
 const cargar = (archivo: string) => readFileSync(new URL(`../fixtures/${archivo}`, import.meta.url), 'utf8')
 
@@ -11,9 +14,9 @@ test('Formulario A: coincide pregunta por pregunta con lo esperado (criterio 1 y
   assert.equal(leido.ok, true)
   const esperado = JSON.parse(readFileSync(new URL('./esperado-form-a.json', import.meta.url), 'utf8'))
   const filas = comparar(esperado, leido as EstructuraForm)
-  writeFileSync(new URL('../fixtures/comparacion-form-a.md', import.meta.url), tablaMarkdown(filas) + '\n')
+  writeFileSync(new URL('../salidas/comparacion-form-a.md', import.meta.url), tablaMarkdown(filas) + '\n')
   const dif = filas.filter((f) => !f.coincide)
-  assert.deepEqual(dif, [], `Hay ${dif.length} diferencias; ver fixtures/comparacion-form-a.md`)
+  assert.deepEqual(dif, [], `Hay ${dif.length} diferencias; ver salidas/comparacion-form-a.md`)
 })
 
 test('Formulario A: leer dos veces da el mismo resultado (criterio 7)', () => {
@@ -46,8 +49,8 @@ test('Formulario B: reconoce cada tipo con sus opciones (criterio 2 y 3)', { ski
   assert.equal(leido.ok, true)
   const esperado = JSON.parse(readFileSync(new URL('./esperado-form-b.json', import.meta.url), 'utf8'))
   const filas = comparar(esperado, leido as EstructuraForm)
-  writeFileSync(new URL('../fixtures/comparacion-form-b.md', import.meta.url), tablaMarkdown(filas) + '\n')
+  writeFileSync(new URL('../salidas/comparacion-form-b.md', import.meta.url), tablaMarkdown(filas) + '\n')
   assert.deepEqual((leido as EstructuraForm).noSoportadas, [])
   const dif = filas.filter((f) => !f.coincide)
-  assert.deepEqual(dif, [], `Hay ${dif.length} diferencias; ver fixtures/comparacion-form-b.md`)
+  assert.deepEqual(dif, [], `Hay ${dif.length} diferencias; ver salidas/comparacion-form-b.md`)
 })

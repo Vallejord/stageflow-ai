@@ -1,11 +1,14 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import type { EstructuraForm } from '../lib/motor/google-forms/estructura.ts'
 import { construirPedido, revisarRespuestas, type RespuestaIA } from '../lib/motor/google-forms/respuestas.ts'
 import { proponerRespuestas } from '../lib/motor/proponer.ts'
 import { ErrorIA } from '../lib/motor/ia/gemini.ts'
 import { compararRespuestas, tablaRespuestas } from './comparar-respuestas.ts'
+
+// Las tablas de comparación de cada corrida de npm test van a salidas/ (ignorada por git); la evidencia commiteada queda en fixtures/.
+mkdirSync(new URL('../salidas/', import.meta.url), { recursive: true })
 
 const leer = (ruta: string) => JSON.parse(readFileSync(new URL(`../${ruta}`, import.meta.url), 'utf8'))
 const formA: EstructuraForm = leer('fixtures/form-a.estructura.json')
@@ -105,9 +108,9 @@ const corridasA = existsSync(new URL('../fixtures', import.meta.url))
 test('Corrida real del A coincide con lo esperado (criterio 2 y 3)', { skip: !corridasA.length && 'todavía no hay corrida real' }, () => {
   const r = leer(`fixtures/${corridasA[0]}`)
   const filas = compararRespuestas(esperadas, r.respuestas)
-  writeFileSync(new URL('../fixtures/comparacion-respuestas-form-a.md', import.meta.url), tablaRespuestas(filas) + '\n')
+  writeFileSync(new URL('../salidas/comparacion-respuestas-form-a.md', import.meta.url), tablaRespuestas(filas) + '\n')
   assert.equal(r.llamadasIA, 1)
-  assert.deepEqual(filas.filter((f) => !f.coincide), [], 'ver fixtures/comparacion-respuestas-form-a.md')
+  assert.deepEqual(filas.filter((f) => !f.coincide), [], 'ver salidas/comparacion-respuestas-form-a.md')
 })
 
 test('Tres corridas del A: mismos valores en lo que sale de la ficha (criterio 7)', { skip: corridasA.length < 3 && 'faltan corridas' }, () => {

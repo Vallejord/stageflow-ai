@@ -16,7 +16,7 @@ const formA: EstructuraForm = JSON.parse(leer('fixtures/form-a.estructura.json')
 const formB: EstructuraForm = JSON.parse(leer('fixtures/form-b.estructura.json'))
 const propuestasA: Propuesta[] = JSON.parse(leer('fixtures/form-a.respuestas.json')).respuestas
 
-const navegador = await chromium.launch({ channel: 'chrome', headless: true })
+const navegador = await chromium.launch({ headless: true }) // Chromium de Playwright; el Chrome del usuario es solo para el recorrido real
 after(() => navegador.close())
 
 /** Abre el HTML guardado sin scripts ni red, e inyecta el módulo. */

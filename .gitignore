@@ -21,3 +21,9 @@ node_modules
 
 # Agent runtime logs
 logs/
+
+# Salidas de npm test (tablas de comparación de cada corrida)
+salidas/
+
+# Configuración local de Claude Code
+.claude/settings.local.json
