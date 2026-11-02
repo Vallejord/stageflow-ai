@@ -1,0 +1,33 @@
+{
+  "_fuente": "Escrito a mano para la T3: un valor por cada tipo de pregunta del Formulario B, para probar el completado (la ficha no tiene estos datos). Incluye varias opciones en casillas y en la cuadrícula de casillas.",
+  "formulario": "PRUEBA StageFlow — Formulario B (tipos)",
+  "respuestas": [
+    { "entry": "entry.1121520150", "pregunta": "¿En qué disciplinas trabaja la compañía?", "tipo": "casillas", "obligatoria": true, "respuesta": ["Teatro", "Danza"], "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": [] },
+    { "entry": "entry.474601466", "pregunta": "Provincia", "tipo": "desplegable", "obligatoria": true, "respuesta": "Córdoba", "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": [] },
+    { "entry": "entry.223954454", "pregunta": "Año de estreno", "tipo": "respuesta_corta", "obligatoria": false, "respuesta": "2019", "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": [] },
+    { "entry": "entry.55975959", "pregunta": "Fecha de estreno", "tipo": "fecha", "obligatoria": true, "respuesta": "2019-05-17", "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": [] },
+    { "entry": "entry.452777983", "pregunta": "Horario preferido de función", "tipo": "hora", "obligatoria": false, "respuesta": "21:30", "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": [] },
+    { "entry": "entry.380367010", "pregunta": "¿Qué tan adaptable es la obra a espacios no convencionales?", "tipo": "escala", "obligatoria": true, "respuesta": "4", "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": [] },
+    {
+      "entry": null,
+      "filas": [
+        { "entry": "entry.806976356", "titulo": "Enero" },
+        { "entry": "entry.852949929", "titulo": "Febrero" },
+        { "entry": "entry.1234861109", "titulo": "Marzo" }
+      ],
+      "pregunta": "Disponibilidad por mes", "tipo": "cuadricula_opcion", "obligatoria": true,
+      "respuesta": { "Enero": "Disponible", "Febrero": "No disponible", "Marzo": "Disponible" },
+      "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": []
+    },
+    {
+      "entry": null,
+      "filas": [
+        { "entry": "entry.494853336", "titulo": "Sala chica" },
+        { "entry": "entry.979075374", "titulo": "Sala grande" }
+      ],
+      "pregunta": "Necesidades técnicas por sala", "tipo": "cuadricula_casillas", "obligatoria": false,
+      "respuesta": { "Sala chica": ["Sonido"], "Sala grande": ["Sonido", "Luces", "Proyector"] },
+      "origen": "ficha", "campo": "prueba", "nota": null, "revisar": false, "motivos": [], "avisos": []
+    }
+  ]
+}

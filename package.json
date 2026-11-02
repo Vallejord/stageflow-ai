@@ -9,6 +9,7 @@
     "start": "next start",
     "leer-form": "node tools/leer-form.ts",
     "capturar-seccion": "node tools/capturar-seccion.ts",
+    "completar": "node --env-file-if-exists=.env.local tools/completar.ts",
     "proponer": "node --env-file-if-exists=.env.local tools/proponer.ts",
     "test": "node --test tests/estructura.test.ts tests/respuestas.test.ts tests/completar.test.ts"
   },
