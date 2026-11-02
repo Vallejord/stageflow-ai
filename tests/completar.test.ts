@@ -185,3 +185,10 @@ test('Borrador de una corrida anterior (HTML real): se lee lo que trae', async (
   assert.deepEqual(s.campos.map((c: any) => c.valor), ['Teatro + Danza', 'Córdoba', ''])
   await page.close()
 })
+
+test('Archivo subido (HTML real del A, página 4): se detecta como hecho', async () => {
+  const page = await abrir('form-a-p4-archivo-subido')
+  const pend = await page.evaluate((p) => (window as any).__stageflowCompletar.estadoPendientes(p), propuestasA)
+  assert.deepEqual(pend.map((p: any) => [p.entry, p.tipo, p.hecho]), [['entry.187110554', 'archivo', true]])
+  await page.close()
+})

@@ -349,10 +349,15 @@ export async function completarSeccion(propuestas: Propuesta[], doc: Document = 
 
 // ---------- Lo que tiene que hacer la persona ----------
 
-/** Archivo ya subido: Google agrega un input hidden "entry.N" con el id del archivo (sin "_sentinel"). */
+/**
+ * Archivo ya subido (visto en el Formulario A): dentro de la pregunta aparece la ficha del archivo con su id de Drive
+ * ([data-id][data-mime-type]) y, FUERA de la pregunta, un input hidden "entry.N" con [[[id, nombre, tipo]]].
+ */
 function archivoSubido(item: Item): boolean {
+  if (item.el.querySelector('[data-id][data-mime-type]')) return true
+  const doc = item.el.ownerDocument
   return item.entries.some((e) =>
-    [...item.el.querySelectorAll<HTMLInputElement>(`input[type="hidden"][name="${e}"]`)].some((i) => i.value.trim() !== ''),
+    [...doc.querySelectorAll<HTMLInputElement>(`input[type="hidden"][name="${e}"]`)].some((i) => i.value.trim() !== ''),
   )
 }
 

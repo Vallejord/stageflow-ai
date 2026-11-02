@@ -89,7 +89,7 @@ function instruccion(p: PendienteRecorrido, propuestas: Propuesta[]): string {
 const context = await chromium.launchPersistentContext(path.resolve('.browser-user-data'), {
   channel: 'chrome',
   headless: false,
-  viewport: { width: 1280, height: 900 },
+  viewport: null, // el tamaño real de la ventana: con uno fijo, la persona no llega a scrollear hasta abajo
   ignoreDefaultArgs: ['--enable-automation'],
   args: ['--disable-blink-features=AutomationControlled'],
 })
@@ -171,11 +171,23 @@ try {
       const tPausa = performance.now()
       anotar(`PAUSA — falta que hagas esto en la ventana del navegador:`)
       for (const p of pendientes.filter((x) => !x.hecho)) console.log(`   → ${instruccion(p, propuestas)}`)
+      let avanzoLaPersona = false
       while (pendientes.some((p) => !p.hecho) && performance.now() - tPausa < ESPERA_PERSONA_MS) {
         await page.waitForTimeout(REVISAR_CADA_MS)
+        // Si la persona apretó "Siguiente" (o "Atrás"), la sección cambió: se sigue con la que está a la vista.
+        const ahora = await leerSeguro(page)
+        if (ahora && ahora.firma !== lectura.firma) {
+          avanzoLaPersona = true
+          break
+        }
         pendientes = await revisarPendientes()
       }
       msEsperandoPersona += performance.now() - tPausa
+      if (avanzoLaPersona) {
+        anotar('la persona cambió de página durante la pausa: sigo con la página que está a la vista')
+        filas.push(...resultados.map((r) => ({ ...r, pagina })))
+        continue
+      }
       if (pendientes.some((p) => !p.hecho)) {
         anotar('pasaron 10 minutos sin que se completara lo pendiente: se corta el recorrido')
         codigoSalida = 4
