@@ -17,14 +17,15 @@ Estos dos archivos son copia de los documentos del Proyecto "agente de postulaci
 - Contar y reportar las llamadas a la IA y su costo.
 - Un commit por paso significativo, con mensaje claro.
 
-## Estado (30/10/2026)
-- **T1 cerrada y aprobada:** lector de estructura de Google Forms en `lib/motor/google-forms/estructura.ts`; comando `npm run leer-form -- <link> <nombre>`; pruebas con `npm test`; fixtures en `fixtures/`.
-- **T2 cerrada y aprobada:** respuestas para cada pregunta con una llamada a Gemini (`lib/motor/google-forms/respuestas.ts`, `lib/motor/ia/gemini.ts`, `npm run proponer`).
-- **T3 cerrada y aprobada:** completado solo DOM en `lib/motor/google-forms/completar.ts`; recorrido `npm run completar`. **Paso 1 (Motor) cerrado.**
-- **T4 cerrada y aprobada:** extensión en `extension/` (WXT + React + TS, MV3) y ruta `POST /api/respuestas`. **Paso 2 (Extensión) cerrado.**
-- **T5 asignada al chat desarrollo** (no a Claude Code): servidor publicado en Firebase y cuentas reales. Ver `docs/tareas.md`. Si te abren en este repo mientras la T5 está abierta, no toques código.
-- **T5a cerrada y aprobada (limpieza):** la app web es una sola página informativa; la única ruta de API es `/api/respuestas`; no existe `public/`; los archivos de prueba están en `fixtures/archivos-de-prueba/`; compila sin `ignoreBuildErrors`. El agente viejo y la maqueta de v0 se borraron (recuperables en git, antes de `d4d62b2`).
-- Next 16.4.4 (actualización de seguridad, paso 0 de la T5).
+## Estado (03/11/2026)
+- **Pasos 1 (Motor) y 2 (Extensión) cerrados:** T1–T4 aprobadas.
+- **T5 y T5a aprobadas:** app web con "Entrar con Google" y "Mis obras" (Firestore `usuarios/{uid}/obras`); servidor publicado en Firebase App Hosting (`https://stageflow-ai--gen-lang-client-0273571986.us-east4.hosted.app`); `/api/respuestas` exige la sesión de Firebase (sin token de desarrollo); la extensión entra con Google y habla con el servidor publicado. La app web es una sola página honesta; no existe `public/`. Next 16.4.4.
+- **T6 asignada a Claude Code (vos), en la rama `t6-drive`:** la ficha sale sola del Drive. Ver `docs/tareas.md`.
+- Configuración en la raíz: `firestore.rules`, `firebase.json`, `.firebaserc`, `apphosting.yaml`. Pruebas: `npm test`, `npm run test:reglas` (emulador, Java 21).
+
+## Flujo de ramas
+- **Cada push a `main` publica el servidor.** Cada tarea se trabaja en su rama (`t6-drive`, …) y se fusiona a `main` solo cuando mission control la aprueba.
+- Nunca compartir capturas de la terminal o de `.env.local` con claves a la vista.
 
 ## Decisiones tomadas
 - Arquitectura: **app web + extensión de Chrome** (completa en el navegador del artista). Sin sesiones de Google de usuarios en servidores ni navegadores en la nube.

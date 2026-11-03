@@ -3,7 +3,7 @@
 Última actualización: 30/10/2026 (stack: Firebase). **Este documento es la referencia única del plan.** Cualquier tarea, idea o cambio se contrasta contra él. Si algo no está acá, no es parte del MVP. Si el plan cambia, se cambia este documento.
 
 ## Qué es el producto
-StageFlow ayuda a artistas (teatro, música, danza, escritura, artes visuales) a postular a convocatorias. El artista hace el menor trabajo posible: su información sale de su Google Drive, y StageFlow completa cada formulario por él. **Nunca envía: el artista revisa y aprieta "Enviar".**
+StageFlow ayuda a artistas (teatro, música, danza, escritura, artes visuales) a postular a convocatorias. El artista hace el menor trabajo posible: tiene todo el material de su obra en una carpeta de Google Drive (textos, PDFs, documentos, fotos, videos), StageFlow arma la ficha desde ahí y completa cada formulario por él. El Drive es la única fuente de datos. **Nunca envía: el artista revisa y aprieta "Enviar".**
 
 ## El flujo, desde el artista
 **Una sola vez**
@@ -95,14 +95,14 @@ El MVP está listo para venderse cuando se cumple todo esto, medido y no estimad
 9. **Uso real:** Monte Virgen postula a una convocatoria real con StageFlow, sola, sin ayuda técnica.
 10. **Distribución:** app web publicada, extensión instalable (no listada) y política de privacidad publicada.
 
-## Estado y estimación (actualizado 2/11/2026, trabajando 3 h por día)
+## Estado y estimación (actualizado 3/11/2026, trabajando 3 h por día)
 | Paso | Estado | Estimación |
 |---|---|---|
 | 1. Motor | ✅ Cerrado (T1, T2, T3) | — |
 | 2. Extensión | ✅ Cerrado (T4) | — |
-| 3. Drive + Firebase | T5 asignada (servidor y cuentas); siguen T6 (ficha desde Drive) y T7 (revisión y ficha que aprende) | 10–15 días (el más grande e incierto) |
+| 3. Drive + Firebase | T5 ✅ (servidor publicado y cuentas) · T6 asignada (ficha desde Drive) · sigue T7 (revisión, textos y ficha que aprende) | 6–10 días restantes |
 | 4. Beta con Monte Virgen | No empezado | 7–10 días, más la espera de revisión de la Chrome Web Store |
-| **MVP** | ~35% | **quedan ~17–25 días de trabajo ≈ 50–75 h ≈ 4–6 semanas** (los pasos 1 y 2 tomaron 4 días, menos de lo estimado) |
+| **MVP** | ~50% | **quedan ~13–20 días de trabajo ≈ 40–60 h ≈ 3–4 semanas** (pasos 1 y 2 y la T5 tomaron 5 días) |
 | Lanzamiento comercial (cobro, Microsoft Forms, permiso de Drive para producción, página de venta, términos) | — | 3–5 semanas más |
 
 **Límites conocidos de Google Forms** (aprendidos en el paso 1): los archivos subidos no se guardan en el borrador, así que subirlos es siempre un paso de la persona en cada sesión. (Lo del desplegable con borrador resultó ser un error nuestro, corregido en la T4: se completa sin problemas.)

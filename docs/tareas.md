@@ -8,8 +8,9 @@ Tablero de tareas que mission control (chat general) asigna al **chat desarrollo
 | T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | **Cerrada y aprobada (31/10/2026)** |
 | T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** — criterio 2 reformulado |
 | T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** |
-| T5 | 3. Drive + Firebase | Servidor publicado y cuentas reales (chat desarrollo) | En curso (02/11/2026) |
+| T5 | 3. Drive + Firebase | Servidor publicado y cuentas reales (chat desarrollo) | **Cerrada y aprobada (03/11/2026)** |
 | T5a | 3. Drive + Firebase | Limpieza: la app muestra solo lo que funciona (chat desarrollo, dentro de la T5) | **Cerrada y aprobada (03/11/2026)** |
+| T6 | 3. Drive + Firebase | La ficha sale sola del Drive, partiendo de cero (Claude Code en Cursor, rama `t6-drive`) | Asignada (03/11/2026) |
 
 ---
 
@@ -378,6 +379,28 @@ Commits `ab18637` a `751ab8f` (más la limpieza T5a, ya aprobada) y el de este c
 
 **Para que mission control actualice en `CLAUDE.md`:** la app web tiene cuentas y «Mis obras»; el servidor está publicado en App Hosting y se publica solo desde `main` (cada push a `main` es una publicación); `/api/respuestas` usa la sesión de Firebase y ya no hay token de desarrollo; la extensión entra con Google y habla con el servidor publicado; `npm run test:reglas` (Java 21); `firestore.rules`, `firebase.json`, `.firebaserc` y `apphosting.yaml` en la raíz.
 
+
+### Verificación de mission control de la T5 (03/11/2026)
+Revisado de forma independiente:
+- **Commits:** `f13d197` a `36c7d11`, en GitHub.
+- **Reglas de Firestore:** cada usuario solo lee y escribe bajo `usuarios/{su uid}`; todo lo demás cerrado.
+- **App Hosting:** la clave de Gemini se toma de Secret Manager; 0 a 2 instancias (sin costo en reposo y con tope).
+- **La clave de Gemini (rotada)** no aparece en el repo ni en la extensión compilada.
+- **Servidor publicado:** evidencia de 401 sin sesión y con sesión falsa, y 404 en las rutas viejas (no pude repetir la prueba desde acá: la red de esta sesión no llega a ese dominio).
+- **Pruebas:** las 23 sin navegador pasan en una copia limpia del último commit.
+
+**Decisiones:**
+1. **Rotar la clave** fue lo correcto. Regla para adelante: no compartir capturas de la terminal o de `.env.local` con claves a la vista.
+2. **Consentimiento en modo prueba, Firebase AI Logic desactivada y regiones:** aprobados.
+3. **"Sesión de otro usuario" probada con pruebas automáticas y no con una segunda cuenta real:** aceptado por ahora. Antes de la beta se prueba con la cuenta del BA, que se suma como usuario de prueba.
+4. **Los 21,5 s de la primera respuesta** (servidor que arranca de cero): se vuelven a medir con el servidor despierto antes de la beta. Si molesta, se evalúa `minInstances: 1` (tiene costo fijo).
+5. **Nuevo flujo de trabajo, porque cada push a `main` publica el servidor:** desde la T6 se trabaja en una rama por tarea (`t6-drive`, etc.), y se fusiona a `main` solo cuando mission control aprueba la tarea. Queda en `CLAUDE.md`.
+6. **Marca "StageFlow" en la pantalla de consentimiento:** se hace en la T7 o antes de la beta.
+7. **Identificador de la extensión al publicarla:** queda anotado para el paso 4.
+8. **Revisión de tipos de `tools/` y `tests/`** (observación de la T5a): se suma en la T6.
+
+**T5 aprobada.**
+
 ---
 
 ## T5a — Limpieza: la app muestra solo lo que funciona
@@ -477,3 +500,62 @@ Revisado de forma independiente en el repo:
 **Observación para más adelante (no bloquea):** `tsconfig.json` excluye `tools/` y `tests/`, y Node los ejecuta quitando los tipos sin revisarlos, así que hoy nada verifica los tipos de esos archivos. Conviene sumar un `npm run typecheck` con su propia configuración cuando haya un momento (por ejemplo, al cerrar la T5).
 
 **T5a aprobada.**
+
+---
+
+## T6 — La ficha sale sola del Drive (paso 3 del plan, parte 2 de 3)
+
+**Herramienta:** Claude Code en Cursor, en la rama `t6-drive` (no en `main`: cada push a `main` publica el servidor). Empezar en modo plan.
+
+**Objetivo:** el artista tiene **todo el material de su obra en una carpeta de Drive** (textos, PDFs, documentos, fotos, videos) y StageFlow arma la ficha sola a partir de esa carpeta, con la fuente de cada dato. **El Drive es la única fuente:** nada de datos cargados a mano ni archivos del repo. Los archivos se quedan en su Drive; StageFlow guarda solo los datos y la referencia a cada archivo.
+
+**Paso 0b — Partir de cero (pedido por Ezequiel, 03/11/2026):** antes de probar la extracción, sacar todo lo que pueda contaminar la prueba:
+- Borrar la obra de demo de Firestore (la de la cuenta de Ezequiel) y quitar el botón que la carga en desarrollo. "Mis obras" tiene que quedar vacío hasta conectar una carpeta.
+- El servidor y la app no leen ningún archivo local de datos: `/api/respuestas` usa solo la ficha guardada en Firestore.
+- `data/obra-demo.json` y la ficha congelada de la T2 pasan a `fixtures/` como **datos de prueba del motor** (las pruebas de T1–T4 los siguen usando), con un README que diga que no son datos de ningún usuario. Se borra `fixtures/archivos-de-prueba/` si nada lo usa.
+- Commit propio. Comprobar con `git grep` que ningún código de la app, el servidor ni la extensión lee esos archivos.
+
+**Paso 0 — Revisión de tipos:** `npm run typecheck` que revise también `tools/` y `tests/` (observación de la T5a). Commit propio.
+
+**Paso 1 — Investigación del permiso de Drive (antes de construir la pantalla):** probar si, con el permiso liviano (`drive.file`) y el selector de Google, eligiendo **una carpeta** se pueden listar y leer los archivos que tiene adentro. Documentar el resultado en `docs/investigacion-permiso-drive.md` con las opciones y su costo para el artista:
+- (a) carpeta con `drive.file`, si funciona;
+- (b) elegir varios archivos con el selector (`drive.file`);
+- (c) leer todo el Drive (`drive.readonly`): sin auditoría solo mientras haya menos de 100 usuarios de prueba.
+
+**Mission control decide** la opción antes de construir la pantalla. Mientras tanto se puede avanzar con el paso 2, que no depende de esto.
+
+**Paso 2 — Extracción (servidor):**
+- Dado una carpeta de Drive **(incluidas sus subcarpetas)**, leer cada archivo según su tipo:
+  - **Texto** (`.txt`, Google Docs, Word) como texto.
+  - **PDF** (el dossier) con Gemini leyendo el PDF directamente.
+  - **Imágenes** por sus metadatos (resolución, peso, formato), sin IA.
+  - **Videos:** sin IA (es caro y no aporta datos de la ficha). Se catalogan con su nombre, duración y peso, y se avisa que los formularios suelen pedir un **link** (YouTube o Vimeo), no el archivo. Si algún documento trae links de video, se asocian.
+  - Cualquier otro tipo: se lista como "otro" sin procesar.
+- Clasificar cada archivo: dossier, foto, rider o ficha técnica, prensa, otro.
+- Extraer la ficha con IA: **cada dato con su fuente** (archivo y página o fragmento citado) y un estado: `seguro`, `revisar` (deducido) o `conflicto` (dos fuentes dicen cosas distintas: se guardan las dos).
+- **Verificación por código, sin confiar en la IA:** el fragmento citado como fuente tiene que aparecer en el texto del archivo; si no aparece, el dato pasa a `revisar` con el motivo. Ningún nombre, email, teléfono, número o link puede aparecer en la ficha si no está en algún archivo.
+- **Materiales:** lista de archivos con su tipo, la referencia de Drive y avisos (foto de menos de 300 DPI, archivo de más de 10 MB, link no público).
+- La ficha nueva guarda los datos que ya usa `/api/respuestas` (la T2 sigue funcionando sin cambios en su lógica).
+
+**Paso 3 — Pantalla mínima en la app web:** "Conectar la carpeta de tu obra" → progreso → la ficha armada **solo para leer**, con colores (verde seguro, amarillo revisar o conflicto, vacío) y la fuente de cada dato a la vista. Editar y confirmar llega en la T7.
+
+**Seguridad:** el permiso de Drive se usa en el momento y no se guarda en Firestore ni en registros. No se copia ningún archivo a Firebase.
+
+**Criterios de aceptación**
+1. Informe de la investigación del permiso, con la opción que decida mission control implementada.
+2. **Carpeta de prueba:** una carpeta de Drive elegida por Ezequiel con el material real de una obra, con al menos un PDF, un texto, un documento, fotos y un video, y alguna subcarpeta. **Antes de la primera corrida con IA**, Ezequiel escribe (o revisa) `tests/ficha-esperada-carpeta-prueba.json` con los datos correctos que hay en esa carpeta, como se hizo en la T2.
+3. **Partir de cero:** antes de conectar la carpeta, "Mis obras" está vacío y `/api/respuestas` responde "sin obra"; ningún código de la app, el servidor ni la extensión lee archivos de datos del repo (`git grep`).
+4. Con la carpeta de prueba: **al menos 95% de los datos correctos** comparando con lo esperado (tabla dato por dato) y **cero inventos** (verificado por código).
+5. Cada dato muestra su fuente, y el fragmento citado aparece en el archivo de origen.
+6. Los conflictos entre documentos se muestran como conflicto, no se elige uno en silencio.
+7. Materiales: todos los archivos de la carpeta y sus subcarpetas clasificados (incluidos los videos, con duración y peso); los avisos de calidad son correctos (comprobados contra los archivos reales).
+8. Costo menor a USD 0,10 y tiempo menor a 2 minutos para la carpeta de prueba. Se informan llamadas, tokens y costo.
+9. **Regresión:** con la ficha nueva, el Formulario A se completa desde la extensión contra el servidor (en local o en una vista previa, no en `main`) con todos los campos de texto y opción verificados.
+10. Ningún token de Drive guardado en Firestore ni en registros; ningún archivo copiado a Firebase.
+11. `npm test`, `npm run test:reglas` y `npm run typecheck` pasan; la extensión compila.
+
+**Requisitos previos (Ezequiel):** activar la API de Drive y el selector de Google en el proyecto; credenciales locales para Firestore (`gcloud auth application-default login` en la terminal de Cursor, o el emulador); armar la carpeta de prueba en Drive y compartir con Claude Code su ubicación.
+
+**Evidencia para cerrar:** informe del permiso, la ficha esperada y la extraída, tabla de comparación, prueba de cero inventos, capturas de la pantalla, costo y tiempo, corrida de regresión del A, salidas de las pruebas, commits en la rama `t6-drive`. Actualizar el "Cierre" en `docs/tareas.md`.
+
+**Fuera de esta tarea:** editar y confirmar la ficha, versiones de los textos (sinopsis corta, inglés) y "la ficha aprende" (T7); varias obras con selector en el panel; subir archivos sin Drive; publicar en `main`.
