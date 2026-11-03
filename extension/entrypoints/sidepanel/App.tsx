@@ -168,6 +168,15 @@ export function App() {
     )
 
   const s = estado.seccion
+  // Página sin preguntas ni botones: es la confirmación de Google después de "Enviar". No hay nada para completar.
+  if (s.campos.length === 0 && !s.haySiguiente && !s.hayEnviar)
+    return (
+      <main>
+        <h1>StageFlow</h1>
+        <p className="formulario">{estado.estructura.titulo}</p>
+        <p className="final">Este formulario ya se envió. No hay nada para completar en esta página.</p>
+      </main>
+    )
   const enPagina = (propuestas ?? []).filter((p) => s.campos.some((c) => c.entries.includes(entryDe(p) ?? '')))
   const deEstaPagina = resultados?.firma === s.firma ? resultados.lista : []
   const resultadoDe = (p: Propuesta) => deEstaPagina.find((r) => r.entry === entryDe(p))

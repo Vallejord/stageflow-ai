@@ -11,7 +11,7 @@ Está en desarrollo y lo usa solo el equipo. El plan y las tareas están en `doc
 | Carpeta | Qué es |
 |---|---|
 | `lib/motor/` | El motor: lee la estructura del formulario (sin IA), propone respuestas con una sola llamada a Gemini y completa y verifica cada campo dentro de la página. |
-| `app/` | La app web (Next.js) y el servidor. La única ruta de API es `POST /api/respuestas`, que usa la extensión. |
+| `app/` | La app web (Next.js): entrar con Google y «Mis obras». La única ruta de API es `POST /api/respuestas`, que usa la extensión con la sesión de la persona. |
 | `extension/` | La extensión de Chrome (WXT + React). Usa el mismo motor, sin copiarlo. |
 | `tools/` | Herramientas de desarrollo: leer un formulario, proponer respuestas, completar un formulario con Playwright. |
 | `tests/`, `fixtures/` | Pruebas automáticas y los datos guardados con los que corren. |
@@ -19,7 +19,7 @@ Está en desarrollo y lo usa solo el equipo. El plan y las tareas están en `doc
 
 ## Cómo correrlo (Windows, con npm)
 
-Requisitos: Node 24 y un archivo `.env.local` en la raíz con `GEMINI_API_KEY` y `STAGEFLOW_DEV_TOKEN` (no se sube a git).
+Requisitos: Node 24 y un archivo `.env.local` en la raíz con `GEMINI_API_KEY` (no se sube a git). El servidor publicado (Firebase App Hosting, se publica solo desde `main`) toma la clave de Secret Manager.
 
 ```
 npm install
@@ -36,7 +36,7 @@ npm install
 npm run build      # se carga en Chrome desde extension/.output/chrome-mv3 («Cargar descomprimida»)
 ```
 
-La extensión lee `extension/.env.local` (`WXT_STAGEFLOW_SERVIDOR`, `WXT_STAGEFLOW_TOKEN`).
+La extensión habla con el servidor publicado y entra con la cuenta de Google de la persona. Para probarla contra un servidor local: `WXT_STAGEFLOW_SERVIDOR=http://localhost:3000` en `extension/.env.local`. Las reglas de la base de datos se prueban con `npm run test:reglas` (necesita Java 21).
 
 Herramientas (usan la sesión de Google guardada en `.browser-user-data/`):
 
