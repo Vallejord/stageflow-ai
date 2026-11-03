@@ -342,6 +342,42 @@ El paso 3 se divide en tres tareas: **T5** (servidor y cuentas), **T6** (ficha d
 
 **Fuera de esta tarea:** Drive, extraer la ficha de documentos, la pantalla de revisión, "la ficha aprende", publicar en la Chrome Web Store, dominio propio, cobro.
 
+### Cierre (03/11/2026) — chat desarrollo
+Commits `ab18637` a `751ab8f` (más la limpieza T5a, ya aprobada) y el de este cierre. Servidor publicado: **https://stageflow-ai--gen-lang-client-0273571986.us-east4.hosted.app** (App Hosting, backend `stageflow-ai`, se publica desde `main`). Evidencia en `fixtures/t5/`.
+
+| Criterio | Resultado | Evidencia |
+|---|---|---|
+| 1. Seguridad de Next | ✅ 16.4.0 → 16.4.4 (tres fallas críticas, dos de ejecución remota de código sin sesión) | `37a97ef` |
+| 2. App publicada: HTTPS, entrar, ver la obra, salir | ✅ abre por HTTPS; entra con Google y ve «Deseo, mantente firme» leída de Firestore. «Salir» se probó en local (misma app); en la publicada se ve el estado sin sesión antes de entrar | `c2-publicada-sin-sesion.png`, `c2-publicada-mis-obras.png`, `b3-despues-de-salir.png` |
+| 3. Clave de Gemini solo en Secret Manager | ✅ `apphosting.yaml` la toma de Secret Manager (secreto `GEMINI_API_KEY`, versión 2); la primera publicación falló hasta darle acceso al backend, lo que confirma que la lee de ahí. 0 apariciones en el repo (`git grep`) y en la extensión compilada | `c1-app-hosting-publicado.png` |
+| 4. Reglas probadas con el emulador | ✅ 5/5: el dueño lee y escribe; otro usuario no lee, no escribe ni borra; sin sesión nada; fuera de `usuarios/` todo cerrado. Reglas desplegadas | `reglas-emulador.txt` |
+| 5. `/api/respuestas` publicado | ✅ sin sesión → 401; sesión falsa → 401; rutas viejas → 404; con la sesión de Ezequiel responde con su ficha (el panel recibió las respuestas). ⚠️ «Sesión de otro usuario» probado con pruebas automáticas (responde 404 `sin_obra` sin datos ajenos; el uid sale siempre de la sesión), no con una segunda cuenta real contra el servidor publicado | `c2-servidor-publicado-401.txt`, `c3-panel-servidor-publicado.png`, `tests/api-respuestas.test.ts` |
+| 6. De punta a punta, sin `npm run dev` | ✅ Formulario A completado desde el panel con el servidor publicado: pág. 2 «5 respuestas quedaron bien», pág. 4 «4», pág. 5 «2»; tareas de archivo y bases tachándose solas; última página con «Revisá todo y apretá «Enviar» vos». ⚠️ En las capturas de la pág. 3 no se ve la línea del conteo (7 campos; el formulario muestra los valores escritos): 11 de 18 con conteo visible. Retoques de la T4 verificados: «La respondés vos», sugerencias sin nombres internos de la ficha, texto de tareas legible | `c4-a-01.png` a `c4-a-10.png` |
+| 7. Cerrar y abrir Chrome no pide entrar | ✅ | `b5-panel-tras-reabrir-chrome.png` |
+| 8. Sin token de desarrollo | ✅ 0 apariciones de `X-StageFlow`, `STAGEFLOW_TOKEN`/`STAGEFLOW_DEV` en la extensión compilada; el servidor ya no tiene código que lo lea; quitado de los dos `.env.local` y del README | búsqueda en `extension/.output` |
+| 9. Costo y alertas | ✅ noviembre en Google Cloud: USD 0,09 (pronóstico del mes: USD 1,17). Gemini (prepago de AI Studio): ~3 llamadas en la tarea, ≈ USD 0,015. Alerta de **USD 10** activa. La de USD 25 no se creó, por decisión de Ezequiel | `c5-presupuesto-y-costo-noviembre.png`, `c5-prepago-ai-studio.png` |
+| 10. Pruebas | ✅ `npm test` 35/35 (9 nuevas de la ruta con cuentas); `npm run test:reglas` 5/5 | salidas del 03/11 |
+
+**Cómo quedó:**
+- **App web:** «Entrar con Google» / «Salir» (Firebase Auth) y «Mis obras» desde Firestore (`usuarios/{uid}/obras`). La carga de la ficha de demo es un botón que solo existe en `npm run dev`.
+- **Servidor:** `/api/respuestas` exige `Authorization: Bearer <sesión de Firebase>`, la verifica con `firebase-admin` y usa la ficha de ese uid (nunca un uid del pedido). CORS solo para la extensión de StageFlow.
+- **Extensión:** identificador fijo `ibepmlkkjffdhonobnhhklckchmdbgjo` (clave pública en el manifiesto; la privada fuera de git), permiso nuevo `identity`, cliente OAuth de tipo extensión, Firebase Auth `web-extension`. Respuestas guardadas por cuenta. Habla con el servidor publicado (`WXT_STAGEFLOW_SERVIDOR` solo para probar en local).
+- **Firebase:** proyecto `gen-lang-client-0273571986`, Firestore en `southamerica-east1`, pantalla de consentimiento en modo prueba con Ezequiel como único usuario de prueba (el BA todavía no participa).
+
+**Hallazgos y decisiones para mission control:**
+1. **Clave de Gemini rotada:** la original quedó a la vista en una captura de la terminal compartida en el chat. Se rotó, se guardó como versión 2 del secreto y se probó (`.env.local` actualizado).
+2. **Clave pública de Firebase:** estaba restringida a 25 APIs de Firebase (sin Gemini). Se le quitó también «Firebase AI Logic API» (otra vía hacia Gemini desde el navegador, que no usamos).
+3. **La pantalla de consentimiento estaba «En producción»** (cualquiera podía entrar). Se pasó a modo prueba. El único cliente OAuth previo era el que creó Firebase.
+4. **Regiones:** App Hosting no ofrece Sudamérica; el servidor quedó en `us-east4` y Firestore en `southamerica-east1`. Hay una ida y vuelta entre regiones por pedido; no se notó en la prueba.
+5. **Tiempo hasta ver las respuestas:** 21,5 s la primera vez (servidor que arranca de cero + IA). El criterio de 20 s era de la T4; conviene medirlo de nuevo con el servidor ya despierto antes de la beta.
+6. **Error del panel encontrado y corregido:** en la confirmación de Google («Se ha registrado tu respuesta») el panel decía «Primera página» y ofrecía «Completar esta página». Ahora dice «Este formulario ya se envió. No hay nada para completar en esta página.» (`751ab8f`, probado con el Formulario B).
+7. **Desarrollo local de aquí en adelante:** el servidor local verifica sesiones pero no puede leer Firestore sin credenciales. Para la T6/T7 hará falta `gcloud auth application-default login` o el emulador de Firestore. Java 21 quedó instalado en la máquina de Ezequiel (lo usa el emulador).
+8. **Avisos de `npm audit` aceptados:** `@grpc/grpc-js` 1.9 dentro de la librería de Firebase para el navegador (solo se usa en Node; la extensión y la app web no lo incluyen y el servidor usa `firebase-admin`, con 1.14.7); avisos moderados de `glob`, `minimatch` y `rimraf` dentro de `firebase-admin` (herramientas internas, no atienden pedidos).
+9. **Marca en la ventana de Google:** al entrar se lee «gen-lang-client-0273571986.firebaseapp.com». Se corrige en «Información de la marca» de la pantalla de consentimiento (nombre «StageFlow»); no bloquea.
+10. **El identificador de la extensión cambia al publicarla en la Chrome Web Store** (paso 4): habrá que actualizarlo en el cliente OAuth, en `ORIGEN_EXTENSION` del servidor y en `extension/lib/config-publica.ts`.
+
+**Para que mission control actualice en `CLAUDE.md`:** la app web tiene cuentas y «Mis obras»; el servidor está publicado en App Hosting y se publica solo desde `main` (cada push a `main` es una publicación); `/api/respuestas` usa la sesión de Firebase y ya no hay token de desarrollo; la extensión entra con Google y habla con el servidor publicado; `npm run test:reglas` (Java 21); `firestore.rules`, `firebase.json`, `.firebaserc` y `apphosting.yaml` en la raíz.
+
 ---
 
 ## T5a — Limpieza: la app muestra solo lo que funciona
