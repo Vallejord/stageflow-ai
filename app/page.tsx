@@ -1,5 +1,7 @@
-// Inicio de la app web (T5a): solo dice lo que StageFlow hace hoy.
-// "Entrar con Google" y "Mis obras" se agregan en la T5 (B3), cuando funcionen de verdad.
+// Inicio de la app web: dice lo que StageFlow hace hoy y permite entrar con Google (T5).
+// "Mis obras" se agrega cuando las reglas de Firestore estén probadas.
+import { Cuenta } from '@/components/cuenta'
+
 const PASOS = [
   'Abrís el formulario de la convocatoria (Google Forms) en Chrome.',
   'Abrís el panel de StageFlow al costado del formulario.',
@@ -13,7 +15,10 @@ export default function Inicio() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-8 px-4 py-12 md:py-20">
       <header className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight">StageFlow</h1>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <h1 className="text-3xl font-semibold tracking-tight">StageFlow</h1>
+          <Cuenta />
+        </div>
         <p className="text-lg leading-relaxed text-muted-foreground">
           Te ayuda a completar formularios de convocatorias con los datos de tu obra. Vos revisás y enviás.
         </p>
