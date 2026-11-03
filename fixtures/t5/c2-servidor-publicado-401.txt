@@ -1,0 +1,10 @@
+Servidor publicado (https://stageflow-ai--gen-lang-client-0273571986.us-east4.hosted.app), 03/11/2026 14:00, desde la máquina de Ezequiel (curl.exe):
+--- sin sesion
+{"ok":false,"error":{"motivo":"sin_sesion","mensaje":"Entrá con tu cuenta de Google en el panel de StageFlow."}}
+-> 401
+--- sesion falsa
+{"ok":false,"error":{"motivo":"sesion_invalida","mensaje":"Tu sesión venció. Volvé a entrar con tu cuenta de Google."}}
+-> 401
+--- rutas viejas (con cuerpo; sin cuerpo Google responde 411 antes de llegar al servidor)
+api/agent/run -> 404
+api/ingest -> 404
