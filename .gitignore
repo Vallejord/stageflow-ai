@@ -39,3 +39,8 @@ extension/.wxt/
 extension/.clave/*.pem
 # Pruebas sueltas
 fixtures/prueba-clave.respuestas.json
+
+# Registros del emulador y de la herramienta de Firebase
+firebase-debug.log
+firestore-debug.log
+.firebase/

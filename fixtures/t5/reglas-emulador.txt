@@ -1,0 +1,7 @@
+npm run test:reglas — máquina de Ezequiel, 03/11/2026 10:38 (Java 21.0.13, emulador cloud-firestore-emulator-v1.22.0)
+✔ El dueño lee y escribe sus obras
+✔ Otro usuario no puede leer las obras de Ezequiel
+✔ Otro usuario no puede escribir ni borrar las obras de Ezequiel   (PERMISSION_DENIED en create/update/delete, esperado)
+✔ Sin sesión no se puede leer ni escribir nada                       (PERMISSION_DENIED, esperado)
+✔ Fuera de usuarios/ todo está cerrado, incluso con sesión           (PERMISSION_DENIED: No matching allow statements, esperado)
+tests 5 · pass 5 · fail 0
