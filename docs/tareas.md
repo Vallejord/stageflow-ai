@@ -9,7 +9,7 @@ Tablero de tareas que mission control (chat general) asigna al **chat desarrollo
 | T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** — criterio 2 reformulado |
 | T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** |
 | T5 | 3. Drive + Firebase | Servidor publicado y cuentas reales (chat desarrollo) | En curso (02/11/2026) |
-| T5a | 3. Drive + Firebase | Limpieza: la app muestra solo lo que funciona (chat desarrollo, dentro de la T5) | Aprobada con ajustes (02/11/2026) |
+| T5a | 3. Drive + Firebase | Limpieza: la app muestra solo lo que funciona (chat desarrollo, dentro de la T5) | **Cerrada y aprobada (03/11/2026)** |
 
 ---
 
@@ -426,3 +426,18 @@ Commits, uno por bloque: `d4d62b2` (servidor), `810cea4` (app web), `83e192a` (`
 - El ícono "N" abajo a la izquierda de la captura es el indicador de Next en modo desarrollo; no aparece en la versión publicada.
 - La app web queda sin ícono de pestaña (los de v0 eran genéricos). Se puede sumar uno propio más adelante.
 - `npm install` en la máquina de Ezequiel quitó del `package-lock.json` dependencias opcionales de `@google/genai` (servidor MCP) que no usamos; se incluye en este commit.
+
+### Verificación de mission control (03/11/2026)
+Revisado de forma independiente en el repo:
+- **Commits:** uno por bloque (`d4d62b2`, `810cea4`, `83e192a`, `2dda594`) más el cierre `2ccfb25`, todos en GitHub. Paso 0 de la T5 hecho antes: Next 16.4.0 → 16.4.4 (`37a97ef`).
+- **Servidor:** la única ruta de API que queda en `app/` es `api/respuestas`.
+- **App web:** una sola página (`app/page.tsx`) sin botones ni enlaces; cada texto describe algo que existe (verificado contra T1–T4). Captura "después" revisada.
+- **`public/` ya no existe;** los archivos de prueba están en `fixtures/archivos-de-prueba/`, ya no se sirven a nadie.
+- **Sin referencias colgadas:** `git grep` de lo borrado solo encuentra la mención en `CLAUDE.md` (actualizada ahora) y la explicación del README de los archivos de prueba.
+- **Sin secretos:** la clave de Gemini no aparece en ningún archivo del repo. (Las cadenas `AIza` de `fixtures/html/` son claves públicas del propio Google Forms, incluidas en las páginas guardadas.)
+- **`next.config.mjs` sin `ignoreBuildErrors`;** paquete `stageflow`; Playwright en desarrollo.
+- **Pruebas:** las 20 sin navegador pasan en una copia limpia del último commit.
+
+**Observación para más adelante (no bloquea):** `tsconfig.json` excluye `tools/` y `tests/`, y Node los ejecuta quitando los tipos sin revisarlos, así que hoy nada verifica los tipos de esos archivos. Conviene sumar un `npm run typecheck` con su propia configuración cuando haya un momento (por ejemplo, al cerrar la T5).
+
+**T5a aprobada.**

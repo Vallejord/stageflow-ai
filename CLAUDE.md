@@ -23,7 +23,8 @@ Estos dos archivos son copia de los documentos del Proyecto "agente de postulaci
 - **T3 cerrada y aprobada:** completado solo DOM en `lib/motor/google-forms/completar.ts`; recorrido `npm run completar`. **Paso 1 (Motor) cerrado.**
 - **T4 cerrada y aprobada:** extensión en `extension/` (WXT + React + TS, MV3) y ruta `POST /api/respuestas`. **Paso 2 (Extensión) cerrado.**
 - **T5 asignada al chat desarrollo** (no a Claude Code): servidor publicado en Firebase y cuentas reales. Ver `docs/tareas.md`. Si te abren en este repo mientras la T5 está abierta, no toques código.
-- El agente viejo (`app/api/agent/run/route.ts`, captura → Gemini → Playwright) queda como referencia histórica; no se sigue extendiendo.
+- **T5a cerrada y aprobada (limpieza):** la app web es una sola página informativa; la única ruta de API es `/api/respuestas`; no existe `public/`; los archivos de prueba están en `fixtures/archivos-de-prueba/`; compila sin `ignoreBuildErrors`. El agente viejo y la maqueta de v0 se borraron (recuperables en git, antes de `d4d62b2`).
+- Next 16.4.4 (actualización de seguridad, paso 0 de la T5).
 
 ## Decisiones tomadas
 - Arquitectura: **app web + extensión de Chrome** (completa en el navegador del artista). Sin sesiones de Google de usuarios en servidores ni navegadores en la nube.
