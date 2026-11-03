@@ -1,0 +1,16 @@
+# Configuración del servidor publicado en Firebase App Hosting (T5).
+# Se publica solo desde la rama main de GitHub.
+runConfig:
+  # 0 instancias cuando nadie lo usa: no cuesta nada en reposo (la primera visita tarda unos segundos más).
+  minInstances: 0
+  # Tope bajo mientras lo usa solo el equipo: limita el gasto si algo sale mal.
+  maxInstances: 2
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  # La clave de Gemini vive en Secret Manager; nunca en el repo.
+  - variable: GEMINI_API_KEY
+    secret: GEMINI_API_KEY
+    availability:
+      - RUNTIME
