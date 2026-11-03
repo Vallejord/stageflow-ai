@@ -1,6 +1,6 @@
 // Inicio de la app web: dice lo que StageFlow hace hoy y permite entrar con Google (T5).
-// "Mis obras" se agrega cuando las reglas de Firestore estén probadas.
 import { Cuenta } from '@/components/cuenta'
+import { MisObras } from '@/components/mis-obras'
 
 const PASOS = [
   'Abrís el formulario de la convocatoria (Google Forms) en Chrome.',
@@ -23,6 +23,8 @@ export default function Inicio() {
           Te ayuda a completar formularios de convocatorias con los datos de tu obra. Vos revisás y enviás.
         </p>
       </header>
+
+      <MisObras />
 
       <section aria-labelledby="como-funciona" className="flex flex-col gap-4">
         <h2 id="como-funciona" className="text-xl font-semibold">
