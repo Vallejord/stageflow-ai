@@ -1,7 +1,8 @@
 // Pide las respuestas al servidor de StageFlow (una vez por formulario) y las guarda en el almacenamiento de la extensión.
 import type { EstructuraForm } from '../../lib/motor/google-forms/estructura.ts'
 import type { Propuesta } from '../../lib/motor/google-forms/respuestas.ts'
-import { SERVIDOR, TOKEN } from './config.ts'
+import { SERVIDOR } from './config.ts'
+import { auth, tokenDeSesion } from './cuenta.ts'
 
 export interface Guardadas {
   propuestas: Propuesta[]
@@ -13,18 +14,22 @@ export interface Guardadas {
 
 export type ResultadoPedido = { ok: true; guardadas: Guardadas; deLaMemoria: boolean } | { ok: false; motivo: string; mensaje: string }
 
-const clave = (formId: string) => `respuestas:${formId}`
+// Las respuestas guardadas son de cada cuenta: nunca se muestran las de otra cuenta en la misma extensión.
+const clave = (formId: string) => `respuestas:${auth.currentUser?.uid ?? 'sin-cuenta'}:${formId}`
 
 /** Respuestas del formulario: las guardadas si ya se pidieron; si no, una llamada al servidor. */
 export async function respuestasDelFormulario(formId: string, estructura: EstructuraForm): Promise<ResultadoPedido> {
   const memoria = (await browser.storage.local.get(clave(formId)))[clave(formId)] as Guardadas | undefined
   if (memoria) return { ok: true, guardadas: memoria, deLaMemoria: true }
 
+  const token = await tokenDeSesion().catch(() => null)
+  if (!token) return { ok: false, motivo: 'sin_sesion', mensaje: 'Entrá con tu cuenta de Google en el panel de StageFlow.' }
+
   let r: Response
   try {
     r = await fetch(`${SERVIDOR}/api/respuestas`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-StageFlow-Token': TOKEN },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ estructura }),
     })
   } catch {
