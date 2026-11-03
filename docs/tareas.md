@@ -8,7 +8,8 @@ Tablero de tareas que mission control (chat general) asigna al **chat desarrollo
 | T2 | 1. Motor | Respuestas para cada pregunta (mapeo con IA) | **Cerrada y aprobada (31/10/2026)** |
 | T3 | 1. Motor | Completar y verificar el formulario de punta a punta (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** — criterio 2 reformulado |
 | T4 | 2. Extensión | Extensión de Chrome: completar desde el panel lateral (Claude Code en Cursor) | **Cerrada y aprobada (02/11/2026)** |
-| T5 | 3. Drive + Firebase | Servidor publicado y cuentas reales (chat desarrollo) | Asignada (02/11/2026) |
+| T5 | 3. Drive + Firebase | Servidor publicado y cuentas reales (chat desarrollo) | En curso (02/11/2026) |
+| T5a | 3. Drive + Firebase | Limpieza: la app muestra solo lo que funciona (chat desarrollo, dentro de la T5) | Aprobada con ajustes (02/11/2026) |
 
 ---
 
@@ -340,3 +341,88 @@ El paso 3 se divide en tres tareas: **T5** (servidor y cuentas), **T6** (ficha d
 **Evidencia para cerrar:** dirección publicada, capturas (entrada, "Mis obras", panel con sesión, formulario completado, alertas de presupuesto), salida de las pruebas de reglas, pruebas de los 401, búsqueda de secretos en la extensión compilada, commits. Actualizar la tabla y el "Cierre" en `docs/tareas.md`.
 
 **Fuera de esta tarea:** Drive, extraer la ficha de documentos, la pantalla de revisión, "la ficha aprende", publicar en la Chrome Web Store, dominio propio, cobro.
+
+---
+
+## T5a — Limpieza: la app muestra solo lo que funciona
+
+**Origen:** propuesta del chat desarrollo (02/11/2026), pedida por Ezequiel. Texto completo en el Proyecto: `claude/T5a-limpieza.md`. **Aprobada por mission control (02/11/2026) con los ajustes de abajo.**
+
+**Herramienta:** chat desarrollo, en la misma sesión que la T5.
+**Cuándo:** dentro de la T5, después del paso 0 (seguridad de Next) y antes de las cuentas en la app web.
+
+**Objetivo:** que la app web y el servidor publicado muestren y hagan solo lo que funciona de verdad. Un artista no debe ver nada falso.
+
+**Qué sale (resumen; el inventario completo está en `claude/T5a-limpieza.md`):**
+- **Servidor:** el agente viejo (`app/api/agent/run`) y `app/api/ingest` (los dos llaman a Gemini sin sesión), y la variable `STAGEFLOW_SIMULAR_FALLA_IA`.
+- **App web de v0:** pantalla del agente viejo, asistente con pre-evaluación simulada, `components/agent/*`, `lib/form-mapping.ts`, `lib/plays.ts`, menú, encabezado y botones de funciones que no existen, textos que prometen postular solo, metadatos de v0 y `@vercel/analytics`, componentes sin uso.
+- **`public/`:** placeholders, imágenes que no son de la cuenta y `public/test-assets/`.
+- **Documentación y configuración vieja:** README, `docs/ARCHITECTURE.md`, `docs/DIAGNOSTICO-MVP.md`, `docs/GUIA-USUARIO.md`, el contexto viejo en la raíz, archivos de pnpm, `tools/capturar-form.mjs`, `ignoreBuildErrors`. Nombre del paquete → `stageflow`. Playwright a dependencias de desarrollo.
+
+**Qué queda:** motor, extensión, `/api/respuestas`, herramientas, pruebas, fixtures, scripts de los formularios de prueba, `docs/plan-mvp.md`, `docs/tareas.md`, `docs/investigacion-desplegable.md`, `AGENTS.md` y `data/obra-demo.json` (solo como semilla y para pruebas).
+
+**Ajustes de mission control:**
+1. **Se queda** `.browser-user-data/` (sesión que usan `leer-form` y `completar`) y todo lo que usen las herramientas de prueba. Antes de borrar algo, comprobar que ningún archivo que queda lo importa o lo lee.
+2. **Borrar con `git rm`**, para que quede en el historial. La carpeta conectada no permite borrar por defecto: el chat desarrollo pide el permiso una vez, para la carpeta del repo, explicando para qué.
+3. **Un commit por bloque** (servidor, app web, `public/`, documentación y configuración), así cualquier cosa se puede recuperar o revertir por separado.
+4. **`CLAUDE.md`, `docs/plan-mvp.md` y `docs/tareas.md` los mantiene mission control.** El chat desarrollo solo actualiza el "Cierre" de la T5a en `docs/tareas.md` y deja en el cierre lo que haya que cambiar en `CLAUDE.md`; no reescribe los otros dos. Así no vuelve a pasar lo de las versiones pisadas.
+5. El README nuevo dice solo lo que hay hoy: qué es StageFlow, que completa Google Forms desde la extensión y nunca envía, cómo correr el servidor, las pruebas y la extensión, y dónde está el plan.
+
+**Criterios de aceptación**
+1. Ningún texto visible ni metadato promete algo que el código no hace (lista de cada texto y botón visible con su función real).
+2. Ningún dato inventado a la vista.
+3. Cero botones o enlaces que no hacen nada.
+4. Las únicas rutas de API son `/api/respuestas` (según la lista de rutas de `npm run build`).
+5. Ninguna ruta llama a la IA sin sesión una vez publicada (hasta las cuentas, `/api/respuestas` mantiene el token de desarrollo y no se publica).
+6. `npm run build` pasa **sin** `ignoreBuildErrors`.
+7. `npm test` pasa y la extensión compila.
+8. Ningún archivo que queda referencia a algo borrado.
+9. El cierre lista todo lo borrado con su motivo; todo es recuperable en git.
+10. Captura de la app web antes y después.
+
+**Fuera de esta tarea:** cuentas y Firestore, rediseño visual, cambios en el motor o en la extensión (salvo lo necesario para compilar).
+
+### Cierre (03/11/2026) — chat desarrollo
+Commits, uno por bloque: `d4d62b2` (servidor), `810cea4` (app web), `83e192a` (`public/`), `2dda594` (documentación y configuración) y el de este cierre. Antes, el paso 0 de la T5: `37a97ef` (Next 16.4.0 → 16.4.4). Todo lo borrado se hizo con `git rm` y se recupera desde el historial.
+
+| Criterio | Resultado | Evidencia |
+|---|---|---|
+| 1. Ningún texto promete lo que el código no hace | ✅ ver la lista de textos visibles abajo | `fixtures/t5a/despues-inicio.png` |
+| 2. Ningún dato inventado a la vista | ✅ la página no muestra datos de obras (llegan con las cuentas, en la T5) | captura |
+| 3. Cero botones o enlaces que no hacen nada | ✅ la página no tiene botones ni enlaces | `app/page.tsx` |
+| 4. Única ruta de API: `/api/respuestas` | ✅ `npm run build` lista `○ /`, `○ /_not-found` y `ƒ /api/respuestas` | salida de `npm run build` (03/11, máquina de Ezequiel) |
+| 5. Ninguna ruta llama a la IA sin sesión una vez publicada | ✅ las dos rutas sin sesión (`/api/agent/run`, `/api/ingest`) se borraron; `/api/respuestas` mantiene el token de desarrollo hasta las cuentas y todavía no se publica | código |
+| 6. `npm run build` sin `ignoreBuildErrors` | ✅ "Finished TypeScript" sin errores. `tsconfig.json` excluye `extension/` (tiene su propia configuración), `tools/`, `tests/` y `fixtures/` (los corre Node, no los compila Next) | salida de `npm run build` |
+| 7. `npm test` y extensión | ✅ `npm test` 32/32; `wxt build` sin errores | salidas del 03/11 |
+| 8. Nada referencia algo borrado | ✅ `git grep` de cada ruta y archivo borrado: solo quedan menciones en `CLAUDE.md` (ver abajo), en las evidencias de T3/T4 (históricas) y en `components.json` (configuración del generador de componentes; apunta a carpetas que se recrean al agregar uno) | `git grep` |
+| 9. Lista de lo borrado con su motivo | ✅ abajo | — |
+| 10. Captura antes y después | ✅ | `fixtures/t5a/antes-inicio.png`, `antes-asistente.png`, `despues-inicio.png` |
+
+**Textos visibles de la app web y su función real (criterio 1):**
+| Texto | Qué hay detrás |
+|---|---|
+| "StageFlow — Te ayuda a completar formularios de convocatorias con los datos de tu obra. Vos revisás y enviás." | Lo que hacen el motor y la extensión (T1–T4). |
+| Pasos 1 y 2: abrir el formulario en Chrome y el panel de StageFlow | Extensión con panel lateral (T4). |
+| Paso 3: propone respuestas diciendo de dónde sale cada dato | `proponerRespuestas` con origen por respuesta (T2), mostrado en el panel (T4). |
+| Paso 4: «Completar esta página» escribe, verifica y marca lo que hay que revisar | Botón del panel + `completar.ts` (T3, T4). |
+| Paso 5: archivos y bases los hace la persona; el panel dice cuáles y dónde | Tareas de la persona en el panel (T4). |
+| Paso 6: StageFlow nunca envía | Verificado en T3 y T4 (nunca clic en "Enviar"). |
+| "En desarrollo: solo Google Forms y lo usa únicamente el equipo" | Estado real. |
+| Metadatos (título "StageFlow" y descripción) | Mismo contenido que arriba, sin "detecta convocatorias" ni "postula". |
+
+**Lo borrado y por qué:**
+- **Servidor:** `app/api/agent/run` (agente viejo; llamaba a Gemini sin sesión y abría un navegador), `app/api/ingest` (sin uso; llamaba a Gemini sin sesión), la variable `STAGEFLOW_SIMULAR_FALLA_IA` (la falla se simula ahora en la prueba, inyectando `proponer`).
+- **App web:** `app/agente/` (pantalla "buscá la ventana de Chromium"), `components/dashboard/` (asistente con pre-evaluación simulada, menú con "Convocatorias detectadas · 3 nuevas", encabezado con buscador, campana "3 sin leer", avatar "LM", "Nueva obra" y "Cerrar sesión" sin función, tarjeta con "Postular" y "Editar ficha"), `components/agent/` y `lib/form-mapping.ts` (código muerto), `lib/plays.ts` (obra con género, fecha y materiales inventados), `components/ui/`, `lib/utils.ts` y `hooks/` (sin uso tras lo anterior), `@vercel/analytics` y `generator: v0.app`.
+- **`public/`:** íconos y placeholders por defecto de v0, `la-noche-de-pandoras.png` (otra obra), `deseo-mantente-firme.png` (solo la usaba la tarjeta de la maqueta; la imagen de cada obra llega desde Drive en la T6). `public/test-assets/` (dossier y foto de prueba) se **movió** a `fixtures/archivos-de-prueba/`: antes se servía a cualquiera.
+- **Documentación y configuración:** `README.md` viejo (reemplazado por uno que dice solo lo que hay), `docs/ARCHITECTURE.md`, `docs/DIAGNOSTICO-MVP.md`, `docs/GUIA-USUARIO.md` (describían el agente que mira capturas), `stageflow_ai_contexto_para_claude_code.md` (copia vieja; vive en el Proyecto), `pnpm-lock.yaml`, `pnpm-workspace.yaml` y `packageManager: pnpm`, `tools/capturar-form.mjs` (reemplazado por `npm run leer-form`), `typescript.ignoreBuildErrors`. Dependencias quitadas por no tener uso: `@base-ui/react`, `class-variance-authority`, `clsx`, `cn`, `lucide-react`, `tailwind-merge`, `@vercel/analytics`. `playwright` y `shadcn` pasan a desarrollo. `npm audit --omit=dev`: 0 vulnerabilidades (las 6 que muestra `npm install` son de herramientas de desarrollo).
+- Corregido de paso: el texto de uso de `tools/leer-form.ts` decía `pnpm`.
+
+**Para que mission control actualice en `CLAUDE.md`:**
+- Línea 26: el agente viejo (`app/api/agent/run/route.ts`) ya no existe en el repo; queda en el historial de git (antes de `d4d62b2`).
+- "Estado real": la app web es una sola página informativa; no hay wizard, ni pre-evaluación, ni `components/agent/*` ni `lib/form-mapping.ts`; `public/` no existe; los archivos de prueba están en `fixtures/archivos-de-prueba/`; el build compila sin `ignoreBuildErrors`.
+- `docs/plan-mvp.md` no requiere cambios por esta tarea.
+
+**Observaciones:**
+- El ícono "N" abajo a la izquierda de la captura es el indicador de Next en modo desarrollo; no aparece en la versión publicada.
+- La app web queda sin ícono de pestaña (los de v0 eran genéricos). Se puede sumar uno propio más adelante.
+- `npm install` en la máquina de Ezequiel quitó del `package-lock.json` dependencias opcionales de `@google/genai` (servidor MCP) que no usamos; se incluye en este commit.
